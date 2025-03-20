@@ -1,13 +1,18 @@
-import { FaWeight, FaBrain, FaMale, FaEye } from "react-icons/fa"
-import { GiJoint, GiAnticlockwiseRotation } from "react-icons/gi"
+import { FaWeight, FaBrain, FaMale, FaEye } from "react-icons/fa";
+import { GiJoint, GiAnticlockwiseRotation } from "react-icons/gi";
 
 export default function ProductCategories() {
   return (
     <section className="py-12 px-10 bg-gray-50">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-4xl font-semibold text-blue-500 text-center flex-grow font-Poppins">PRODUCT REVIEW</h2>
-          <a href="/ProductSearch" className="text-red-500 font-semibold flex items-center hover:underline">
+          <h2 className="text-4xl font-semibold text-blue-500 text-center flex-grow font-Poppins">
+            PRODUCT REVIEW
+          </h2>
+          <a
+            href="/ProductSearch"
+            className="text-red-500 font-semibold flex items-center hover:underline"
+          >
             VIEW ALL <span className="ml-1">→</span>
           </a>
         </div>
@@ -38,7 +43,7 @@ export default function ProductCategories() {
                 <FaMale size={60} />
               </div>
               <h3 className="text-xl font-semibold text-gray-800 group-hover:text-blue-500 transform transition-all duration-300 group-hover:scale-110 group-hover:translate-x-1">
-                Men's Health
+                Men&apos;s Health
               </h3>
             </div>
           </div>
@@ -75,5 +80,5 @@ export default function ProductCategories() {
         </div>
       </div>
     </section>
-  )
+  );
 }
