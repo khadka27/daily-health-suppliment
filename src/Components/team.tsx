@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 export default function TeamSection() {
     return (
       <section id="team" className="mb-10">
