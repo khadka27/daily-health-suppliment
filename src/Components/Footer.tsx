@@ -1,53 +1,36 @@
+import Link from "next/link"
 export default function Footer() {
+
+ 
+
     return (
       <footer className="bg-gray-800 text-white">
         {/* Top Navigation Bar */}
         <div className="border-b border-gray-700">
           <div className="container mx-auto px-4 py-4">
             <nav className="flex flex-wrap justify-center md:justify-end space-x-2 md:space-x-6">
-              <div className="relative group">
-                <button className="flex items-center py-2 px-1 hover:text-gray-300 transition-colors">
-                  About Us
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4 ml-1"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-                <div className="absolute left-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg py-1 z-10 hidden group-hover:block">
-                  <a href="#" className="block px-4 py-2 text-sm hover:bg-gray-700">
-                    Our Story
-                  </a>
-                  <a href="#" className="block px-4 py-2 text-sm hover:bg-gray-700">
-                    Our Team
-                  </a>
-                  <a href="#" className="block px-4 py-2 text-sm hover:bg-gray-700">
-                    Testimonials
-                  </a>
-                </div>
-              </div>
-              <a href="#" className="py-2 px-1 hover:text-gray-300 transition-colors">
+              
+              <Link href="/About" className="py-2 px-1 hover:text-gray-300 transition-colors">
+                About Us
+              </Link>
+              <Link href="/PrivacyPolicy" className="py-2 px-1 hover:text-gray-300 transition-colors">
                 Privacy Policy
-              </a>
-              <a href="#" className="py-2 px-1 hover:text-gray-300 transition-colors">
+              </Link>
+              <Link href="/ReturnPolicy" className="py-2 px-1 hover:text-gray-300 transition-colors">
                 Return Policy
-              </a>
-              <a href="#" className="py-2 px-1 hover:text-gray-300 transition-colors">
+              </Link>
+              <Link href="/Terms" className="py-2 px-1 hover:text-gray-300 transition-colors">
                 Terms of Use
-              </a>
-              <a href="#" className="py-2 px-1 hover:text-gray-300 transition-colors">
+              </Link>
+              <Link href="/About#affiliate-disclosure" className="py-2 px-1 hover:text-gray-300 transition-colors">
                 Disclosure
-              </a>
-              <a href="#" className="py-2 px-1 hover:text-gray-300 transition-colors">
+              </Link>
+              <Link href="/About#contact-us" className="py-2 px-1 hover:text-gray-300 transition-colors">
                 Contact Us
-              </a>
-              <a href="#" className="py-2 px-1 hover:text-gray-300 transition-colors">
+              </Link>
+              <Link href="/WriteForUs" className="py-2 px-1 hover:text-gray-300 transition-colors">
                 Write For Us
-              </a>
+              </Link>
             </nav>
           </div>
         </div>
@@ -86,12 +69,12 @@ export default function Footer() {
               <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <a href="#" className="text-gray-300 hover:text-white transition-colors">
+                  <Link href="/" className="text-gray-300 hover:text-white transition-colors">
                     Home
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="text-gray-300 hover:text-white transition-colors">
+                  <a href="/ArticleListing" className="text-gray-300 hover:text-white transition-colors">
                     Product Reviews
                   </a>
                 </li>
@@ -101,7 +84,7 @@ export default function Footer() {
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-gray-300 hover:text-white transition-colors">
+                  <a href="/GeneralHealth" className="text-gray-300 hover:text-white transition-colors">
                     Health Articles
                   </a>
                 </li>
@@ -111,7 +94,7 @@ export default function Footer() {
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-gray-300 hover:text-white transition-colors">
+                  <a href="/SiteMap" className="text-gray-300 hover:text-white transition-colors">
                     Sitemap
                   </a>
                 </li>

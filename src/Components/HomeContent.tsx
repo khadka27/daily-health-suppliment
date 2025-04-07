@@ -1,6 +1,9 @@
+"use client"
 import { FaFlask, FaStar, FaSearch, FaBell } from "react-icons/fa"
+import { useRouter } from "next/navigation";
 
 export default function HomeContent() {
+  const router = useRouter();
   return (
     <section className="bg-sky-200 py-12 px-4 md:px-8 lg:px-12">
       <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-8 items-center">
@@ -24,8 +27,10 @@ export default function HomeContent() {
               placeholder="How can we help you?"
               className="w-full py-3 bg-white px-4 pr-24 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500"
             />
-            <button className="absolute right-0 top-0 h-full bg-orange-500 hover:bg-orange-600 text-white px-6 rounded-r-full flex items-center transition-colors">
+            <button onClick={() => router.push("/ArticleListing")} className="absolute right-0 top-0 h-full bg-orange-500 hover:bg-orange-600 text-white px-6 rounded-r-full flex items-center transition-colors">
+            
               SEARCH <span className="ml-2">→</span>
+              
             </button>
           </div>
         </div>
