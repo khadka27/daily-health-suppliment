@@ -10,7 +10,7 @@ export default function WriteForUs() {
         <section className="mb-8">
           <p className="mb-4 text-lg">
             Welcome to Daily Health Supplement! We invite expert contributors and wellness enthusiasts to join us in
-            sharing valuable insights and empowering our readers with informative content. Whether you're a seasoned
+            sharing valuable insights and empowering our readers with informative content. Whether you&apos;re a seasoned
             health professional, a passionate advocate for wellness, or a storyteller with a fitness journey to share, we
             encourage you to submit your best articles to be featured on our platform.
           </p>

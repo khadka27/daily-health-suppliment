@@ -33,7 +33,7 @@ export default function ReturnPolicy() {
             <li>A receipt or proof of purchase is required.</li>
             <li>
               All items must be returned in their original condition, including tags, user manuals, warranty cards, and
-              the original manufacturer's packaging.
+              the original manufacturer&apos;s packaging.
             </li>
             <li>
               Note that return options may vary by location. Please read all terms and conditions before making a
@@ -90,7 +90,7 @@ export default function ReturnPolicy() {
       <section className="mb-8">
         <h2 className="text-3xl font-bold text-blue-600 mb-5">Steps to Initiate a Return</h2>
         <p className="mb-4 text-lg">
-          To initiate a return, please follow these steps on the manufacturer or product's official website:
+          To initiate a return, please follow these steps on the manufacturer or product&apos;s official website:
         </p>
         <ul className="list-disc pl-8 mb-4 space-y-3 text-lg">
           <li>Reply to your order confirmation email to request a return.</li>
