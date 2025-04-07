@@ -1,13 +1,13 @@
-import Image from "next/image"
-import logo1 from "@/Images/fox-logo.png"
+import Image from "next/image";
+import logo1 from "@/Images/fox-logo.png";
 export default function Featured() {
   const featuredLogos = [
-    { name: "Fox News", src: logo1},
+    { name: "Fox News", src: logo1 },
     { name: "BBC NEWS", src: logo1 }, // Update with correct image path
-    { name: "CNN", src: logo1}, // Update with correct image path
-    { name: "NBC", src: logo1}, // Update with correct image path
+    { name: "CNN", src: logo1 }, // Update with correct image path
+    { name: "NBC", src: logo1 }, // Update with correct image path
     { name: "BLOOMBERG", src: logo1 }, // Update with correct image path
-  ]
+  ];
 
   return (
     <section className="py-8 sm:py-10 md:py-12 px-4 sm:px-6 md:px-8 lg:px-10 bg-gray-50">
@@ -35,6 +35,5 @@ export default function Featured() {
         </div>
       </div>
     </section>
-  )
+  );
 }
-
