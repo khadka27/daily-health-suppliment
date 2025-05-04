@@ -206,7 +206,7 @@ export default function ReviewHeader({ id }: ReviewHeaderProps) {
                 <span className="mx-2 text-[#666]">{">"}</span>
               </li>
               <li>
-                <Link href="/reviews" className="font-medium text-[#333]">
+                <Link href="/Article" className="font-medium text-[#333]">
                   {articleData.category}
                 </Link>
               </li>

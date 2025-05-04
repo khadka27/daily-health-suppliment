@@ -64,7 +64,7 @@ export default function MenWomenHealthListing() {
                 className="flex flex-col md:flex-row gap-6 bg-white rounded-lg shadow overflow-hidden p-6 border-b"
               >
                 <div className="flex-shrink-0 w-full md:w-48">
-                  <Link href="#">
+                  <Link href="">
                     <div className="border p-2 inline-block">
                       <Image
                         src={article.image || "/placeholder.svg"}
