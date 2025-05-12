@@ -54,7 +54,7 @@ export default function ArticleListing() {
         if (page) queryParams.append('page', page.toString())
         
         // Fetch articles from API
-        const response = await fetch(`/api/article?${queryParams.toString()}`)
+        const response = await fetch(`/api/articles?${queryParams.toString()}`)
         
         if (!response.ok) {
           throw new Error(`Error fetching articles: ${response.status} ${response.statusText}`)
@@ -136,7 +136,7 @@ export default function ArticleListing() {
         <h1 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6">{getTitle()}</h1>
         <div className="bg-blue-50 border border-blue-200 text-blue-700 p-4 rounded-md">
           <h2 className="text-lg font-semibold mb-2">No Articles Found</h2>
-          <p>We couldn&apos;t find any articles matching your criteria. Try adjusting your search terms or browse our latest articles.</p>
+          <p>We couldn't find any articles matching your criteria. Try adjusting your search terms or browse our latest articles.</p>
         </div>
       </div>
     )

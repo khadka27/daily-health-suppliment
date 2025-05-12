@@ -107,34 +107,27 @@ export default function ArticleAdminForm() {
     ctaButtons: [{ text: "Buy Now", url: "", type: "primary", position: "bottom", description: "" }],
   })
 
-  // Replace the existing handleInputChange function with this improved version
-const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-  const { name, value } = e.target;
-  
-  // Detect if this field should be treated as a number
-  const isNumberField = name.includes('Rating') || 
-    (name.includes('.') && name.split('.')[1].includes('rating'));
-  
-  // Set the appropriate value based on field type
-  const processedValue = isNumberField ? parseFloat(value) || 0 : value;
+  // Handle input changes for simple fields
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
 
-  // Handle nested properties
-  if (name.includes(".")) {
-    const [parent, child] = name.split(".");
-    setFormData({
-      ...formData,
-      [parent]: {
-        ...(formData[parent as keyof ArticleData] as Record<string, any>),
-        [child]: processedValue,
-      },
-    });
-  } else {
-    setFormData({
-      ...formData,
-      [name]: processedValue,
-    });
+    // Handle nested properties
+    if (name.includes(".")) {
+      const [parent, child] = name.split(".")
+      setFormData({
+        ...formData,
+        [parent]: {
+          ...(formData[parent as keyof ArticleData] as Record<string, any>),
+          [child]: value,
+        },
+      })
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      })
+    }
   }
-};
 
   // Handle array field changes
   const handleArrayChange = (index: number, field: keyof ArticleData, value: string) => {
@@ -146,29 +139,23 @@ const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaE
     })
   }
 
-  // Replace the existing handleObjectArrayChange function with this improved version
-const handleObjectArrayChange = (
-  index: number,
-  field: keyof ArticleData,
-  property: string,
-  value: string | number,
-) => {
-  // Process rating values from string to number if needed
-  const processedValue = 
-    (typeof value === 'string' && property.includes('rating')) 
-      ? parseFloat(value) || 0 
-      : value;
-
-  const updatedArray = [...(formData[field] as any[])];
-  updatedArray[index] = {
-    ...updatedArray[index],
-    [property]: processedValue,
-  };
-  setFormData({
-    ...formData,
-    [field]: updatedArray,
-  });
-};
+  // Handle complex object array changes
+  const handleObjectArrayChange = (
+    index: number,
+    field: keyof ArticleData,
+    property: string,
+    value: string | number,
+  ) => {
+    const updatedArray = [...(formData[field] as any[])]
+    updatedArray[index] = {
+      ...updatedArray[index],
+      [property]: value,
+    }
+    setFormData({
+      ...formData,
+      [field]: updatedArray,
+    })
+  }
 
   // Add item to array
   const addArrayItem = (field: keyof ArticleData, template: any) => {
@@ -190,13 +177,12 @@ const handleObjectArrayChange = (
     })
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Replace the existing handleSubmit function with this one
+const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
   setLoading(true);
 
   try {
-    console.log("Starting form submission");
-    
     const response = await fetch("/api/article", {
       method: "POST",
       headers: {
@@ -205,29 +191,17 @@ const handleObjectArrayChange = (
       body: JSON.stringify(formData),
     });
 
-    console.log("Response status:", response.status);
-    
-    // Get response text for debugging
-    const responseText = await response.text();
-    console.log("Response text:", responseText);
-
-    // Parse the response as JSON if possible
-    let data;
-    try {
-      data = responseText ? JSON.parse(responseText) : {};
-    } catch (parseError) {
-      console.error("Error parsing response:", parseError);
-      throw new Error("Invalid response from server");
-    }
-
     if (!response.ok) {
-      throw new Error(data.message || "Failed to save article");
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to save article");
     }
 
-    alert(data.message || "Article saved successfully!");
+    const data = await response.json();
+    alert("Article saved successfully!");
+    console.log("Saved article:", data);
     
-    // Update the form with the ID if it's a new article
-    if (data.id && !formData.id) {
+    // Optionally set the ID from the response if it was a new article
+    if (!formData.id && data.id) {
       setFormData({
         ...formData,
         id: data.id

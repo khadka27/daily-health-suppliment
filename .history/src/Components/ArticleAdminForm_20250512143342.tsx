@@ -146,29 +146,23 @@ const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaE
     })
   }
 
-  // Replace the existing handleObjectArrayChange function with this improved version
-const handleObjectArrayChange = (
-  index: number,
-  field: keyof ArticleData,
-  property: string,
-  value: string | number,
-) => {
-  // Process rating values from string to number if needed
-  const processedValue = 
-    (typeof value === 'string' && property.includes('rating')) 
-      ? parseFloat(value) || 0 
-      : value;
-
-  const updatedArray = [...(formData[field] as any[])];
-  updatedArray[index] = {
-    ...updatedArray[index],
-    [property]: processedValue,
-  };
-  setFormData({
-    ...formData,
-    [field]: updatedArray,
-  });
-};
+  // Handle complex object array changes
+  const handleObjectArrayChange = (
+    index: number,
+    field: keyof ArticleData,
+    property: string,
+    value: string | number,
+  ) => {
+    const updatedArray = [...(formData[field] as any[])]
+    updatedArray[index] = {
+      ...updatedArray[index],
+      [property]: value,
+    }
+    setFormData({
+      ...formData,
+      [field]: updatedArray,
+    })
+  }
 
   // Add item to array
   const addArrayItem = (field: keyof ArticleData, template: any) => {

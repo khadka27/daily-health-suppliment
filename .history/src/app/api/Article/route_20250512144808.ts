@@ -1,4 +1,3 @@
-/* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // src/app/api/article/route.ts
 import { NextRequest, NextResponse } from 'next/server';
@@ -114,41 +113,41 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// export async function GET(request: NextRequest) {
-//   try {
-//     const searchParams = request.nextUrl.searchParams;
-//     const id = searchParams.get('id');
+export async function GET(request: NextRequest) {
+  try {
+    const searchParams = request.nextUrl.searchParams;
+    const id = searchParams.get('id');
     
-//     if (id) {
-//       // Get a specific article by ID
-//       const article = await prisma.article.findUnique({
-//         where: { id },
-//       });
+    if (id) {
+      // Get a specific article by ID
+      const article = await prisma.article.findUnique({
+        where: { id },
+      });
       
-//       if (!article) {
-//         return NextResponse.json(
-//           { success: false, message: 'Article not found' },
-//           { status: 404 }
-//         );
-//       }
+      if (!article) {
+        return NextResponse.json(
+          { success: false, message: 'Article not found' },
+          { status: 404 }
+        );
+      }
       
-//       return NextResponse.json({ success: true, article });
-//     } else {
-//       // Get all articles
-//       const articles = await prisma.article.findMany({
-//         orderBy: { updatedAt: 'desc' },
-//       });
+      return NextResponse.json({ success: true, article });
+    } else {
+      // Get all articles
+      const articles = await prisma.article.findMany({
+        orderBy: { updatedAt: 'desc' },
+      });
       
-//       return NextResponse.json({ success: true, articles });
-//     }
-//   } catch (error) {
-//     console.error('Error fetching article(s):', error);
-//     return NextResponse.json(
-//       { success: false, message: 'Error fetching article(s)', error: String(error) },
-//       { status: 500 }
-//     );
-//   }
-// }
+      return NextResponse.json({ success: true, articles });
+    }
+  } catch (error) {
+    console.error('Error fetching article(s):', error);
+    return NextResponse.json(
+      { success: false, message: 'Error fetching article(s)', error: String(error) },
+      { status: 500 }
+    );
+  }
+}
 
 export async function GET(request: NextRequest) {
   try {

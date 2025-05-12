@@ -107,34 +107,27 @@ export default function ArticleAdminForm() {
     ctaButtons: [{ text: "Buy Now", url: "", type: "primary", position: "bottom", description: "" }],
   })
 
-  // Replace the existing handleInputChange function with this improved version
-const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-  const { name, value } = e.target;
-  
-  // Detect if this field should be treated as a number
-  const isNumberField = name.includes('Rating') || 
-    (name.includes('.') && name.split('.')[1].includes('rating'));
-  
-  // Set the appropriate value based on field type
-  const processedValue = isNumberField ? parseFloat(value) || 0 : value;
+  // Handle input changes for simple fields
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
 
-  // Handle nested properties
-  if (name.includes(".")) {
-    const [parent, child] = name.split(".");
-    setFormData({
-      ...formData,
-      [parent]: {
-        ...(formData[parent as keyof ArticleData] as Record<string, any>),
-        [child]: processedValue,
-      },
-    });
-  } else {
-    setFormData({
-      ...formData,
-      [name]: processedValue,
-    });
+    // Handle nested properties
+    if (name.includes(".")) {
+      const [parent, child] = name.split(".")
+      setFormData({
+        ...formData,
+        [parent]: {
+          ...(formData[parent as keyof ArticleData] as Record<string, any>),
+          [child]: value,
+        },
+      })
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      })
+    }
   }
-};
 
   // Handle array field changes
   const handleArrayChange = (index: number, field: keyof ArticleData, value: string) => {
@@ -146,29 +139,23 @@ const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaE
     })
   }
 
-  // Replace the existing handleObjectArrayChange function with this improved version
-const handleObjectArrayChange = (
-  index: number,
-  field: keyof ArticleData,
-  property: string,
-  value: string | number,
-) => {
-  // Process rating values from string to number if needed
-  const processedValue = 
-    (typeof value === 'string' && property.includes('rating')) 
-      ? parseFloat(value) || 0 
-      : value;
-
-  const updatedArray = [...(formData[field] as any[])];
-  updatedArray[index] = {
-    ...updatedArray[index],
-    [property]: processedValue,
-  };
-  setFormData({
-    ...formData,
-    [field]: updatedArray,
-  });
-};
+  // Handle complex object array changes
+  const handleObjectArrayChange = (
+    index: number,
+    field: keyof ArticleData,
+    property: string,
+    value: string | number,
+  ) => {
+    const updatedArray = [...(formData[field] as any[])]
+    updatedArray[index] = {
+      ...updatedArray[index],
+      [property]: value,
+    }
+    setFormData({
+      ...formData,
+      [field]: updatedArray,
+    })
+  }
 
   // Add item to array
   const addArrayItem = (field: keyof ArticleData, template: any) => {

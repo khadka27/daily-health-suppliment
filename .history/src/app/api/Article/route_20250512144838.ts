@@ -1,4 +1,3 @@
-/* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // src/app/api/article/route.ts
 import { NextRequest, NextResponse } from 'next/server';
