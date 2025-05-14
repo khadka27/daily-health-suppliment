@@ -1,16 +1,16 @@
 /* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // src/app/api/article/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { NextRequest, NextResponse } from "next/server";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 export async function POST(request: NextRequest) {
   try {
     const data = await request.json();
-    console.log('Received article data');
-    
+    console.log("Received article data");
+
     // Destructure the incoming request data
     const {
       id,
@@ -67,12 +67,13 @@ export async function POST(request: NextRequest) {
       ingredients,
       faqs,
       // Make sure customerReviews has numeric ratings
-      customerReviews: Array.isArray(customerReviews) 
-        ? customerReviews.map(review => ({
+      customerReviews: Array.isArray(customerReviews)
+        ? customerReviews.map((review) => ({
             ...review,
-            rating: typeof review.rating === 'string' 
-              ? parseFloat(review.rating) || 0 
-              : review.rating
+            rating:
+              typeof review.rating === "string"
+                ? parseFloat(review.rating) || 0
+                : review.rating,
           }))
         : customerReviews,
       conclusion,
@@ -98,16 +99,16 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: 'Article saved successfully',
-      id: article.id
+      message: "Article saved successfully",
+      id: article.id,
     });
   } catch (error) {
-    console.error('Error saving article:', error);
+    console.error("Error saving article:", error);
     return NextResponse.json(
-      { 
-        success: false, 
-        message: 'Error saving article', 
-        error: String(error) 
+      {
+        success: false,
+        message: "Error saving article",
+        error: String(error),
       },
       { status: 500 }
     );
@@ -117,17 +118,17 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const id = searchParams.get('id'); // Check if the `id` query parameter is passed
-    
+    const id = searchParams.get("id"); // Check if the `id` query parameter is passed
+
     if (id) {
       // If `id` is present, fetch a specific article
       const article = await prisma.article.findUnique({
         where: { id },
       });
-      
+
       if (!article) {
         return NextResponse.json(
-          { success: false, message: 'Article not found' },
+          { success: false, message: "Article not found" },
           { status: 404 }
         );
       }
@@ -135,36 +136,40 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ success: true, article });
     } else {
       // If no `id` is provided, fetch a list of articles with optional filters
-      const category = searchParams.get('category');
-      const search = searchParams.get('search');
-      const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit') as string) : 10;
-      const page = searchParams.get('page') ? parseInt(searchParams.get('page') as string) : 1;
+      const category = searchParams.get("category");
+      const search = searchParams.get("search");
+      const limit = searchParams.get("limit")
+        ? parseInt(searchParams.get("limit") as string)
+        : 10;
+      const page = searchParams.get("page")
+        ? parseInt(searchParams.get("page") as string)
+        : 1;
       const skip = (page - 1) * limit;
 
       // Build where clause based on search parameters
       let whereClause: any = {};
-      
+
       if (category) {
         whereClause.category = category;
       }
-      
+
       if (search) {
         whereClause.OR = [
-          { title: { contains: search, mode: 'insensitive' } },
-          { description: { contains: search, mode: 'insensitive' } },
-          { overview: { contains: search, mode: 'insensitive' } }
+          { title: { contains: search, mode: "insensitive" } },
+          { description: { contains: search, mode: "insensitive" } },
+          { overview: { contains: search, mode: "insensitive" } },
         ];
       }
 
       // Get count for pagination
       const totalCount = await prisma.article.count({
-        where: whereClause
+        where: whereClause,
       });
 
       // Get articles with pagination
       const articles = await prisma.article.findMany({
         where: whereClause,
-        orderBy: { updatedAt: 'desc' },
+        orderBy: { updatedAt: "desc" },
         skip,
         take: limit,
         select: {
@@ -175,28 +180,40 @@ export async function GET(request: NextRequest) {
           productImage: true,
           createdAt: true,
           updatedAt: true,
-        }
+        },
       });
 
       // Format the response to match frontend expectations
-      const formattedArticles = articles.map((article: { title: string; id: any; overview: any; description: string; productImage: any; createdAt: any; updatedAt: any; }) => {
-        const slug = article.title
-          .toLowerCase()
-          .replace(/[^\w\s-]/g, '')
-          .replace(/\s+/g, '-');
+      const formattedArticles = articles.map(
+        (article: {
+          title: string;
+          id: any;
+          overview: any;
+          description: string;
+          productImage: any;
+          createdAt: any;
+          updatedAt: any;
+        }) => {
+          const slug = article.title
+            .toLowerCase()
+            .replace(/[^\w\s-]/g, "")
+            .replace(/\s+/g, "-");
 
-        return {
-          id: article.id,
-          title: article.title,
-          slug,
-          category: "Supplement Reviews", // You might want to add a category field to your schema
-          categorySlug: "supplement-reviews",
-          description: article.overview || article.description.substring(0, 200) + "...",
-          image: article.productImage || "/placeholder.svg?height=200&width=200",
-          createdAt: article.createdAt,
-          updatedAt: article.updatedAt
-        };
-      });
+          return {
+            id: article.id,
+            title: article.title,
+            slug,
+            category: "Supplement Reviews", // You might want to add a category field to your schema
+            categorySlug: "supplement-reviews",
+            description:
+              article.overview || article.description.substring(0, 200) + "...",
+            image:
+              article.productImage || "/placeholder.svg?height=200&width=200",
+            createdAt: article.createdAt,
+            updatedAt: article.updatedAt,
+          };
+        }
+      );
 
       return NextResponse.json({
         success: true,
@@ -205,14 +222,18 @@ export async function GET(request: NextRequest) {
           total: totalCount,
           page,
           limit,
-          totalPages: Math.ceil(totalCount / limit)
-        }
+          totalPages: Math.ceil(totalCount / limit),
+        },
       });
     }
   } catch (error) {
-    console.error('Error fetching article(s):', error);
+    console.error("Error fetching article(s):", error);
     return NextResponse.json(
-      { success: false, message: 'Error fetching article(s)', error: String(error) },
+      {
+        success: false,
+        message: "Error fetching article(s)",
+        error: String(error),
+      },
       { status: 500 }
     );
   }
