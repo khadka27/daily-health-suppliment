@@ -179,7 +179,7 @@ export async function GET(request: NextRequest) {
       });
 
       // Format the response to match frontend expectations
-      const formattedArticles = articles.map(article => {
+      const formattedArticles = articles.map((article: { title: string; id: any; overview: any; description: string; productImage: any; createdAt: any; updatedAt: any; }) => {
         const slug = article.title
           .toLowerCase()
           .replace(/[^\w\s-]/g, '')
