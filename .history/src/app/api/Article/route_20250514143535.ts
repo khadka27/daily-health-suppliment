@@ -117,10 +117,10 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const id = searchParams.get('id'); // Check if the `id` query parameter is passed
+    const id = searchParams.get('id'); // Fetching ID from query parameters
     
     if (id) {
-      // If `id` is present, fetch a specific article
+      // Get the specific article by ID
       const article = await prisma.article.findUnique({
         where: { id },
       });
@@ -131,88 +131,106 @@ export async function GET(request: NextRequest) {
           { status: 404 }
         );
       }
-
+      
       return NextResponse.json({ success: true, article });
-    } else {
-      // If no `id` is provided, fetch a list of articles with optional filters
-      const category = searchParams.get('category');
-      const search = searchParams.get('search');
-      const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit') as string) : 10;
-      const page = searchParams.get('page') ? parseInt(searchParams.get('page') as string) : 1;
-      const skip = (page - 1) * limit;
-
-      // Build where clause based on search parameters
-      let whereClause: any = {};
-      
-      if (category) {
-        whereClause.category = category;
-      }
-      
-      if (search) {
-        whereClause.OR = [
-          { title: { contains: search, mode: 'insensitive' } },
-          { description: { contains: search, mode: 'insensitive' } },
-          { overview: { contains: search, mode: 'insensitive' } }
-        ];
-      }
-
-      // Get count for pagination
-      const totalCount = await prisma.article.count({
-        where: whereClause
-      });
-
-      // Get articles with pagination
-      const articles = await prisma.article.findMany({
-        where: whereClause,
-        orderBy: { updatedAt: 'desc' },
-        skip,
-        take: limit,
-        select: {
-          id: true,
-          title: true,
-          overview: true,
-          description: true,
-          productImage: true,
-          createdAt: true,
-          updatedAt: true,
-        }
-      });
-
-      // Format the response to match frontend expectations
-      const formattedArticles = articles.map(article => {
-        const slug = article.title
-          .toLowerCase()
-          .replace(/[^\w\s-]/g, '')
-          .replace(/\s+/g, '-');
-
-        return {
-          id: article.id,
-          title: article.title,
-          slug,
-          category: "Supplement Reviews", // You might want to add a category field to your schema
-          categorySlug: "supplement-reviews",
-          description: article.overview || article.description.substring(0, 200) + "...",
-          image: article.productImage || "/placeholder.svg?height=200&width=200",
-          createdAt: article.createdAt,
-          updatedAt: article.updatedAt
-        };
-      });
-
-      return NextResponse.json({
-        success: true,
-        articles: formattedArticles,
-        pagination: {
-          total: totalCount,
-          page,
-          limit,
-          totalPages: Math.ceil(totalCount / limit)
-        }
-      });
     }
+    
+    // If no ID is passed, fetch multiple articles as before
+    // You can leave your existing code here for fetching all articles
+    // (Optional) Depending on whether you want to support both functionalities.
+    
   } catch (error) {
     console.error('Error fetching article(s):', error);
     return NextResponse.json(
       { success: false, message: 'Error fetching article(s)', error: String(error) },
+      { status: 500 }
+    );
+  }
+}
+
+
+export async function GET(request: NextRequest) {
+  try {
+    const searchParams = request.nextUrl.searchParams;
+    const category = searchParams.get('category');
+    const search = searchParams.get('search');
+    const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit') as string) : 10;
+    const page = searchParams.get('page') ? parseInt(searchParams.get('page') as string) : 1;
+    const skip = (page - 1) * limit;
+
+    // Build where clause based on search parameters
+    let whereClause: any = {};
+    
+    if (category) {
+      whereClause.category = category;
+    }
+    
+    if (search) {
+      whereClause.OR = [
+        { title: { contains: search, mode: 'insensitive' } },
+        { description: { contains: search, mode: 'insensitive' } },
+        { overview: { contains: search, mode: 'insensitive' } }
+      ];
+    }
+
+    // Get count for pagination
+    const totalCount = await prisma.article.count({
+      where: whereClause
+    });
+
+    // Get articles with pagination
+    const articles = await prisma.article.findMany({
+      where: whereClause,
+      orderBy: { updatedAt: 'desc' },
+      skip,
+      take: limit,
+      select: {
+        id: true,
+        title: true,
+        overview: true,
+        description: true,
+        productImage: true,
+        createdAt: true,
+        updatedAt: true,
+        // Add any other fields you want to include in the listing
+      }
+    });
+
+    // Format the response to match your frontend expectations
+    const formattedArticles = articles.map(article => {
+      // Generate a slug from the title
+      const slug = article.title
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, '')
+        .replace(/\s+/g, '-');
+
+      return {
+        id: article.id,
+        title: article.title,
+        slug,
+        category: "Supplement Reviews", // You might want to add a category field to your schema
+        categorySlug: "supplement-reviews",
+        description: article.overview || article.description.substring(0, 200) + "...",
+        image: article.productImage || "/placeholder.svg?height=200&width=200",
+        createdAt: article.createdAt,
+        updatedAt: article.updatedAt
+      };
+    });
+
+    return NextResponse.json({
+      success: true,
+      articles: formattedArticles,
+      pagination: {
+        total: totalCount,
+        page,
+        limit,
+        totalPages: Math.ceil(totalCount / limit)
+      }
+    });
+  } catch (error) {
+    console.error('Error fetching articles:', error);
+    return NextResponse.json(
+      { success: false, message: 'Error fetching articles', error: String(error) },
       { status: 500 }
     );
   }

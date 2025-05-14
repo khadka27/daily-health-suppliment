@@ -1148,8 +1148,7 @@ const handleObjectArrayChange = (
                           value={review.review}
                           onChange={(e) => handleObjectArrayChange(index, "customerReviews", "review", e.target.value)}
                           placeholder="Customer Review"
-                          rows={3}  
-                          required
+                          rows={3}
                           className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
                       </div>

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
 import { useState, useEffect } from "react"
@@ -198,7 +197,7 @@ const ArticleWrapper: React.FC<ArticleWrapperProps> = ({ id }) => {
         <h2 className="text-2xl font-bold text-blue-600 mb-4">Customer Reviews</h2>
         {articleData.customerReviews?.map((review: any, index: number) => (
           <div key={index} className="border-b pb-4 mb-4">
-            <p className="italic">&quot;{review.review}&quot;</p>
+            <p className="italic">"{review.review}"</p>
             <p className="font-bold">{review.name} from {review.location}</p>
             <p className="text-yellow-500">Rating: {review.rating} / 5</p>
           </div>

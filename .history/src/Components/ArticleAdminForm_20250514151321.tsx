@@ -1112,7 +1112,6 @@ const handleObjectArrayChange = (
                             handleObjectArrayChange(index, "customerReviews", "location", e.target.value)
                           }
                           placeholder="e.g. New York, NY"
-                          required
                           className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
                       </div>
@@ -1130,7 +1129,6 @@ const handleObjectArrayChange = (
                           onChange={(e) =>
                             handleObjectArrayChange(index, "customerReviews", "rating", Number(e.target.value))
                           }
-                          required
                           min="1"
                           max="5"
                           className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
@@ -1148,8 +1146,7 @@ const handleObjectArrayChange = (
                           value={review.review}
                           onChange={(e) => handleObjectArrayChange(index, "customerReviews", "review", e.target.value)}
                           placeholder="Customer Review"
-                          rows={3}  
-                          required
+                          rows={3}
                           className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
                       </div>

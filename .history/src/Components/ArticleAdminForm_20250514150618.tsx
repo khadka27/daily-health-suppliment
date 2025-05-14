@@ -281,7 +281,6 @@ const handleObjectArrayChange = (
                     <input
                       id="title"
                       name="title"
-                      required
                       value={formData.title}
                       onChange={handleInputChange}
                       placeholder="Product Title"
@@ -297,7 +296,6 @@ const handleObjectArrayChange = (
                   <textarea
                     id="overview"
                     name="overview"
-                    required
                     value={formData.overview}
                     onChange={handleInputChange}
                     placeholder="Brief overview of the product"
@@ -313,7 +311,6 @@ const handleObjectArrayChange = (
                   <textarea
                     id="description"
                     name="description"
-                    required
                     value={formData.description}
                     onChange={handleInputChange}
                     placeholder="Detailed description of the product"
@@ -329,7 +326,6 @@ const handleObjectArrayChange = (
                   <textarea
                     id="howToTake"
                     name="howToTake"
-                    required
                     value={formData.howToTake}
                     onChange={handleInputChange}
                     placeholder="Instructions on how to take the product"
@@ -370,7 +366,6 @@ const handleObjectArrayChange = (
                         type="file"
                         accept="image/*"
                         className="hidden"
-                        required
                         onChange={(e) => {
                           if (e.target.files && e.target.files[0]) {
                             const file = e.target.files[0]
@@ -414,7 +409,6 @@ const handleObjectArrayChange = (
                     name="officialWebsite"
                     value={formData.officialWebsite}
                     onChange={handleInputChange}
-                    required
                     placeholder="URL to official website"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   />
@@ -448,7 +442,6 @@ const handleObjectArrayChange = (
                         <input
                           type="text"
                           value={benefit.title}
-                          required
                           onChange={(e) => handleObjectArrayChange(index, "benefits", "title", e.target.value)}
                           placeholder="Benefit Title"
                           className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
@@ -464,7 +457,6 @@ const handleObjectArrayChange = (
                         </label>
                         <textarea
                           value={benefit.description}
-                          required
                           onChange={(e) => handleObjectArrayChange(index, "benefits", "description", e.target.value)}
                           placeholder="Benefit Description"
                           rows={2}
@@ -499,7 +491,6 @@ const handleObjectArrayChange = (
                       id="overallRating"
                       type="number"
                       name="overallRating"
-                      required
                       value={formData.overallRating}
                       onChange={handleInputChange}
                       min="0"
@@ -518,7 +509,6 @@ const handleObjectArrayChange = (
                       id="ingredientsRating"
                       type="number"
                       name="ingredientsRating"
-                      required
                       value={formData.ingredientsRating}
                       onChange={handleInputChange}
                       min="0"
@@ -537,7 +527,6 @@ const handleObjectArrayChange = (
                       id="valueRating"
                       type="number"
                       name="valueRating"
-                      required
                       value={formData.valueRating}
                       onChange={handleInputChange}
                       min="0"
@@ -556,7 +545,6 @@ const handleObjectArrayChange = (
                       id="manufacturerRating"
                       type="number"
                       name="manufacturerRating"
-                      required
                       value={formData.manufacturerRating}
                       onChange={handleInputChange}
                       min="0"
@@ -575,7 +563,6 @@ const handleObjectArrayChange = (
                       id="safetyRating"
                       type="number"
                       name="safetyRating"
-                      required
                       value={formData.safetyRating}
                       onChange={handleInputChange}
                       min="0"
@@ -601,7 +588,6 @@ const handleObjectArrayChange = (
                         <input
                           type="text"
                           value={highlight}
-                          required
                           onChange={(e) => handleArrayChange(index, "brandHighlights", e.target.value)}
                           placeholder="Brand highlight"
                           className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
@@ -637,7 +623,6 @@ const handleObjectArrayChange = (
                         <input
                           type="text"
                           value={ingredient}
-                          required
                           onChange={(e) => handleArrayChange(index, "keyIngredients", e.target.value)}
                           placeholder="Key ingredient"
                           className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
@@ -677,7 +662,6 @@ const handleObjectArrayChange = (
                         <input
                           type="text"
                           value={pro}
-                          required
                           onChange={(e) => handleArrayChange(index, "pros", e.target.value)}
                           placeholder="Product pro"
                           className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
@@ -713,7 +697,6 @@ const handleObjectArrayChange = (
                         <input
                           type="text"
                           value={con}
-                          required
                           onChange={(e) => handleArrayChange(index, "cons", e.target.value)}
                           placeholder="Product con"
                           className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
@@ -770,7 +753,6 @@ const handleObjectArrayChange = (
                           value={ingredient.name}
                           onChange={(e) => handleObjectArrayChange(index, "ingredients", "name", e.target.value)}
                           placeholder="Ingredient Name"
-                          required
                           className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
                       </div>
@@ -784,7 +766,6 @@ const handleObjectArrayChange = (
                         </label>
                         <textarea
                           value={ingredient.description}
-                          required
                           onChange={(e) => handleObjectArrayChange(index, "ingredients", "description", e.target.value)}
                           placeholder="Ingredient Description"
                           rows={2}
@@ -801,7 +782,6 @@ const handleObjectArrayChange = (
                         </label>
                         <textarea
                           value={ingredient.benefits}
-                          required
                           onChange={(e) => handleObjectArrayChange(index, "ingredients", "benefits", e.target.value)}
                           placeholder="Ingredient Benefits"
                           rows={2}
@@ -836,7 +816,6 @@ const handleObjectArrayChange = (
                       onChange={handleInputChange}
                       placeholder="Safety information"
                       rows={3}
-                      required
                       className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
@@ -851,7 +830,6 @@ const handleObjectArrayChange = (
                       value={formData.effectiveness}
                       onChange={handleInputChange}
                       placeholder="Effectiveness information"
-                      required
                       rows={3}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                     />
@@ -868,7 +846,6 @@ const handleObjectArrayChange = (
                       onChange={handleInputChange}
                       placeholder="How the product works"
                       rows={3}
-                      required
                       className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
@@ -884,7 +861,6 @@ const handleObjectArrayChange = (
                       onChange={handleInputChange}
                       placeholder="Article conclusion"
                       rows={3}
-                      required
                       className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
@@ -903,7 +879,6 @@ const handleObjectArrayChange = (
                           value={formData.pricing.singleBottle}
                           onChange={handleInputChange}
                           placeholder="e.g. $69"
-                          required
                           className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
                       </div>
@@ -917,7 +892,6 @@ const handleObjectArrayChange = (
                           name="pricing.threeBottles"
                           value={formData.pricing.threeBottles}
                           onChange={handleInputChange}
-                          required
                           placeholder="e.g. $59/bottle ($177 total)"
                           className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
@@ -932,7 +906,6 @@ const handleObjectArrayChange = (
                           name="pricing.sixBottles"
                           value={formData.pricing.sixBottles}
                           onChange={handleInputChange}
-                          required
                           placeholder="e.g. $49/bottle ($294 total)"
                           className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
@@ -953,7 +926,6 @@ const handleObjectArrayChange = (
                           name="manufacturerInfo.name"
                           value={formData.manufacturerInfo.name}
                           onChange={handleInputChange}
-                          required
                           placeholder="Manufacturer name"
                           className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
@@ -971,7 +943,6 @@ const handleObjectArrayChange = (
                           name="manufacturerInfo.location"
                           value={formData.manufacturerInfo.location}
                           onChange={handleInputChange}
-                          required
                           placeholder="e.g. Tallmadge, Ohio, USA"
                           className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
@@ -991,7 +962,6 @@ const handleObjectArrayChange = (
                           onChange={handleInputChange}
                           placeholder="About the manufacturer"
                           rows={3}
-                          required  
                           className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
                       </div>
@@ -1029,7 +999,6 @@ const handleObjectArrayChange = (
                           value={faq.question}
                           onChange={(e) => handleObjectArrayChange(index, "faqs", "question", e.target.value)}
                           placeholder="FAQ Question"
-                          required
                           className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
                       </div>
@@ -1046,7 +1015,6 @@ const handleObjectArrayChange = (
                           onChange={(e) => handleObjectArrayChange(index, "faqs", "answer", e.target.value)}
                           placeholder="FAQ Answer"
                           rows={3}
-                          required
                           className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
                       </div>
@@ -1093,7 +1061,6 @@ const handleObjectArrayChange = (
                           value={review.name}
                           onChange={(e) => handleObjectArrayChange(index, "customerReviews", "name", e.target.value)}
                           placeholder="Customer Name"
-                          required
                           className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
                       </div>
@@ -1112,7 +1079,6 @@ const handleObjectArrayChange = (
                             handleObjectArrayChange(index, "customerReviews", "location", e.target.value)
                           }
                           placeholder="e.g. New York, NY"
-                          required
                           className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
                       </div>
@@ -1130,7 +1096,6 @@ const handleObjectArrayChange = (
                           onChange={(e) =>
                             handleObjectArrayChange(index, "customerReviews", "rating", Number(e.target.value))
                           }
-                          required
                           min="1"
                           max="5"
                           className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
@@ -1148,8 +1113,7 @@ const handleObjectArrayChange = (
                           value={review.review}
                           onChange={(e) => handleObjectArrayChange(index, "customerReviews", "review", e.target.value)}
                           placeholder="Customer Review"
-                          rows={3}  
-                          required
+                          rows={3}
                           className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
                       </div>
