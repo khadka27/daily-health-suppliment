@@ -1,74 +1,75 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { PlusCircle, Trash2, Save, X } from "lucide-react"
-import CTASection from "./CtaSection"
+import { useState } from "react";
+import Image from "next/image";
+import { PlusCircle, Trash2, Save, X } from "lucide-react";
+import CTASection from "./CtaSection";
 
 interface ArticleData {
-  id: string
-  title: string
-  overview: string
-  description: string
-  howToTake: string
+  id: string;
+  title: string;
+  overview: string;
+  description: string;
+  howToTake: string;
   benefits: {
-    title: string
-    description: string
-  }[]
-  overallRating: number
-  ingredientsRating: number
-  valueRating: number
-  manufacturerRating: number
-  safetyRating: number
-  brandHighlights: string[]
-  keyIngredients: string[]
-  pros: string[]
-  cons: string[]
-  safety: string
-  effectiveness: string
+    title: string;
+    description: string;
+  }[];
+  overallRating: number;
+  ingredientsRating: number;
+  valueRating: number;
+  manufacturerRating: number;
+  safetyRating: number;
+  brandHighlights: string[];
+  keyIngredients: string[];
+  pros: string[];
+  cons: string[];
+  safety: string;
+  effectiveness: string;
   pricing: {
-    singleBottle: string
-    threeBottles: string
-    sixBottles: string
-  }
+    singleBottle: string;
+    threeBottles: string;
+    sixBottles: string;
+  };
   manufacturerInfo: {
-    name: string
-    location: string
-    description: string
-  }
-  howItWorks: string
+    name: string;
+    location: string;
+    description: string;
+  };
+  howItWorks: string;
   ingredients: {
-    name: string
-    description: string
-    benefits: string
-  }[]
+    name: string;
+    description: string;
+    benefits: string;
+  }[];
   faqs: {
-    question: string
-    answer: string
-  }[]
+    question: string;
+    answer: string;
+  }[];
   customerReviews: {
-    name: string
-    location: string
-    rating: number
-    review: string
-  }[]
-  conclusion: string
-  officialWebsite: string
-  productImage: string
+    name: string;
+    location: string;
+    rating: number;
+    review: string;
+  }[];
+  conclusion: string;
+  officialWebsite: string;
+  productImage: string;
   ctaButtons: {
-    text: string
-    url: string
-    type: string
-    position: string
-    description: string
-  }[]
+    text: string;
+    url: string;
+    type: string;
+    position: string;
+    description: string;
+  }[];
 }
 
 export default function ArticleAdminForm() {
-  const [activeTab, setActiveTab] = useState("basic")
-  const [loading, setLoading] = useState(false)
+  const [activeTab, setActiveTab] = useState("basic");
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<ArticleData>({
     id: "",
     title: "",
@@ -104,143 +105,161 @@ export default function ArticleAdminForm() {
     conclusion: "",
     officialWebsite: "",
     productImage: "",
-    ctaButtons: [{ text: "Buy Now", url: "", type: "primary", position: "bottom", description: "" }],
-  })
+    ctaButtons: [
+      {
+        text: "Buy Now",
+        url: "",
+        type: "primary",
+        position: "bottom",
+        description: "",
+      },
+    ],
+  });
 
   // Replace the existing handleInputChange function with this improved version
-const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-  const { name, value } = e.target;
-  
-  // Detect if this field should be treated as a number
-  const isNumberField = name.includes('Rating') || 
-    (name.includes('.') && name.split('.')[1].includes('rating'));
-  
-  // Set the appropriate value based on field type
-  const processedValue = isNumberField ? parseFloat(value) || 0 : value;
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
 
-  // Handle nested properties
-  if (name.includes(".")) {
-    const [parent, child] = name.split(".");
-    setFormData({
-      ...formData,
-      [parent]: {
-        ...(formData[parent as keyof ArticleData] as Record<string, any>),
-        [child]: processedValue,
-      },
-    });
-  } else {
-    setFormData({
-      ...formData,
-      [name]: processedValue,
-    });
-  }
-};
+    // Detect if this field should be treated as a number
+    const isNumberField =
+      name.includes("Rating") ||
+      (name.includes(".") && name.split(".")[1].includes("rating"));
+
+    // Set the appropriate value based on field type
+    const processedValue = isNumberField ? parseFloat(value) || 0 : value;
+
+    // Handle nested properties
+    if (name.includes(".")) {
+      const [parent, child] = name.split(".");
+      setFormData({
+        ...formData,
+        [parent]: {
+          ...(formData[parent as keyof ArticleData] as Record<string, any>),
+          [child]: processedValue,
+        },
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: processedValue,
+      });
+    }
+  };
 
   // Handle array field changes
-  const handleArrayChange = (index: number, field: keyof ArticleData, value: string) => {
-    const updatedArray = [...(formData[field] as string[])]
-    updatedArray[index] = value
+  const handleArrayChange = (
+    index: number,
+    field: keyof ArticleData,
+    value: string
+  ) => {
+    const updatedArray = [...(formData[field] as string[])];
+    updatedArray[index] = value;
     setFormData({
       ...formData,
       [field]: updatedArray,
-    })
-  }
+    });
+  };
 
   // Replace the existing handleObjectArrayChange function with this improved version
-const handleObjectArrayChange = (
-  index: number,
-  field: keyof ArticleData,
-  property: string,
-  value: string | number,
-) => {
-  // Process rating values from string to number if needed
-  const processedValue = 
-    (typeof value === 'string' && property.includes('rating')) 
-      ? parseFloat(value) || 0 
-      : value;
+  const handleObjectArrayChange = (
+    index: number,
+    field: keyof ArticleData,
+    property: string,
+    value: string | number
+  ) => {
+    // Process rating values from string to number if needed
+    const processedValue =
+      typeof value === "string" && property.includes("rating")
+        ? parseFloat(value) || 0
+        : value;
 
-  const updatedArray = [...(formData[field] as any[])];
-  updatedArray[index] = {
-    ...updatedArray[index],
-    [property]: processedValue,
+    const updatedArray = [...(formData[field] as any[])];
+    updatedArray[index] = {
+      ...updatedArray[index],
+      [property]: processedValue,
+    };
+    setFormData({
+      ...formData,
+      [field]: updatedArray,
+    });
   };
-  setFormData({
-    ...formData,
-    [field]: updatedArray,
-  });
-};
 
   // Add item to array
   const addArrayItem = (field: keyof ArticleData, template: any) => {
-    const updatedArray = [...(formData[field] as any[])]
-    updatedArray.push(template)
+    const updatedArray = [...(formData[field] as any[])];
+    updatedArray.push(template);
     setFormData({
       ...formData,
       [field]: updatedArray,
-    })
-  }
+    });
+  };
 
   // Remove item from array
   const removeArrayItem = (field: keyof ArticleData, index: number) => {
-    const updatedArray = [...(formData[field] as any[])]
-    updatedArray.splice(index, 1)
+    const updatedArray = [...(formData[field] as any[])];
+    updatedArray.splice(index, 1);
     setFormData({
       ...formData,
       [field]: updatedArray,
-    })
-  }
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setLoading(true);
+    e.preventDefault();
+    setLoading(true);
 
-  try {
-    console.log("Starting form submission");
-    
-    const response = await fetch("/api/article", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    });
-
-    console.log("Response status:", response.status);
-    
-    // Get response text for debugging
-    const responseText = await response.text();
-    console.log("Response text:", responseText);
-
-    // Parse the response as JSON if possible
-    let data;
     try {
-      data = responseText ? JSON.parse(responseText) : {};
-    } catch (parseError) {
-      console.error("Error parsing response:", parseError);
-      throw new Error("Invalid response from server");
-    }
+      console.log("Starting form submission");
 
-    if (!response.ok) {
-      throw new Error(data.message || "Failed to save article");
-    }
-
-    alert(data.message || "Article saved successfully!");
-    
-    // Update the form with the ID if it's a new article
-    if (data.id && !formData.id) {
-      setFormData({
-        ...formData,
-        id: data.id
+      const response = await fetch("/api/article", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
       });
-    }
-  } catch (error) {
-    console.error("Error submitting form:", error);
-    alert(`Error saving article: ${error instanceof Error ? error.message : "Unknown error"}`);
-  } finally {
-    setLoading(false);
-  }
-};
 
+      console.log("Response status:", response.status);
+
+      // Get response text for debugging
+      const responseText = await response.text();
+      console.log("Response text:", responseText);
+
+      // Parse the response as JSON if possible
+      let data;
+      try {
+        data = responseText ? JSON.parse(responseText) : {};
+      } catch (parseError) {
+        console.error("Error parsing response:", parseError);
+        throw new Error("Invalid response from server");
+      }
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to save article");
+      }
+
+      alert(data.message || "Article saved successfully!");
+
+      // Update the form with the ID if it's a new article
+      if (data.id && !formData.id) {
+        setFormData({
+          ...formData,
+          id: data.id,
+        });
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert(
+        `Error saving article: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="container mx-auto py-8 px-4">
@@ -253,29 +272,42 @@ const handleObjectArrayChange = (
             {/* Tabs */}
             <div className="w-full">
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 mb-6 border-b">
-                {["basic", "benefits", "ratings", "highlights", "ingredients", "details", "faqs", "reviews", "cta"].map(
-                  (tab) => (
-                    <button
-                      key={tab}
-                      type="button"
-                      onClick={() => setActiveTab(tab)}
-                      className={`py-2 px-4 text-center capitalize ${
-                        activeTab === tab
-                          ? "border-b-2 border-blue-500 text-blue-600 font-medium"
-                          : "text-gray-500 hover:text-gray-700"
-                      }`}
-                    >
-                      {tab}
-                    </button>
-                  ),
-                )}
+                {[
+                  "basic",
+                  "benefits",
+                  "ratings",
+                  "highlights",
+                  "ingredients",
+                  "details",
+                  "faqs",
+                  "reviews",
+                  "cta",
+                ].map((tab) => (
+                  <button
+                    key={tab}
+                    type="button"
+                    onClick={() => setActiveTab(tab)}
+                    className={`py-2 px-4 text-center capitalize ${
+                      activeTab === tab
+                        ? "border-b-2 border-blue-500 text-blue-600 font-medium"
+                        : "text-gray-500 hover:text-gray-700"
+                    }`}
+                  >
+                    {tab}
+                  </button>
+                ))}
               </div>
 
               {/* Basic Info Tab */}
-              <div className={`space-y-4 ${activeTab !== "basic" ? "hidden" : ""}`}>
+              <div
+                className={`space-y-4 ${activeTab !== "basic" ? "hidden" : ""}`}
+              >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label
+                      htmlFor="title"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
                       Product Title
                     </label>
                     <input
@@ -291,7 +323,10 @@ const handleObjectArrayChange = (
                 </div>
 
                 <div>
-                  <label htmlFor="overview" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="overview"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
                     Overview
                   </label>
                   <textarea
@@ -307,7 +342,10 @@ const handleObjectArrayChange = (
                 </div>
 
                 <div>
-                  <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="description"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
                     Description
                   </label>
                   <textarea
@@ -323,7 +361,10 @@ const handleObjectArrayChange = (
                 </div>
 
                 <div>
-                  <label htmlFor="howToTake" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="howToTake"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
                     How To Take
                   </label>
                   <textarea
@@ -339,7 +380,10 @@ const handleObjectArrayChange = (
                 </div>
 
                 <div>
-                  <label htmlFor="productImage" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="productImage"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
                     Product Image
                   </label>
                   <div className="flex items-center gap-4">
@@ -361,9 +405,12 @@ const handleObjectArrayChange = (
                           />
                         </svg>
                         <p className="mb-2 text-sm text-gray-500">
-                          <span className="font-semibold">Click to upload</span> or drag and drop
+                          <span className="font-semibold">Click to upload</span>{" "}
+                          or drag and drop
                         </p>
-                        <p className="text-xs text-gray-500">PNG, JPG or WEBP (MAX. 2MB)</p>
+                        <p className="text-xs text-gray-500">
+                          PNG, JPG or WEBP (MAX. 2MB)
+                        </p>
                       </div>
                       <input
                         id="productImage"
@@ -373,29 +420,33 @@ const handleObjectArrayChange = (
                         required
                         onChange={(e) => {
                           if (e.target.files && e.target.files[0]) {
-                            const file = e.target.files[0]
-                            const reader = new FileReader()
+                            const file = e.target.files[0];
+                            const reader = new FileReader();
                             reader.onloadend = () => {
                               setFormData({
                                 ...formData,
                                 productImage: reader.result as string,
-                              })
-                            }
-                            reader.readAsDataURL(file)
+                              });
+                            };
+                            reader.readAsDataURL(file);
                           }
                         }}
                       />
-                    </label>
+                    </label>{" "}
                     {formData.productImage && (
                       <div className="relative h-32 w-32">
-                        <img
+                        <Image
                           src={formData.productImage || "/placeholder.svg"}
                           alt="Product preview"
+                          width={128}
+                          height={128}
                           className="h-full w-full object-cover rounded-lg"
                         />
                         <button
                           type="button"
-                          onClick={() => setFormData({ ...formData, productImage: "" })}
+                          onClick={() =>
+                            setFormData({ ...formData, productImage: "" })
+                          }
                           className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
                         >
                           <X className="h-4 w-4" />
@@ -406,7 +457,10 @@ const handleObjectArrayChange = (
                 </div>
 
                 <div>
-                  <label htmlFor="officialWebsite" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="officialWebsite"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
                     Official Website
                   </label>
                   <input
@@ -422,9 +476,15 @@ const handleObjectArrayChange = (
               </div>
 
               {/* Benefits Tab */}
-              <div className={`space-y-4 ${activeTab !== "benefits" ? "hidden" : ""}`}>
+              <div
+                className={`space-y-4 ${
+                  activeTab !== "benefits" ? "hidden" : ""
+                }`}
+              >
                 <h3 className="text-lg font-medium">Product Benefits</h3>
-                <p className="text-sm text-gray-500">Add all the benefits of the product</p>
+                <p className="text-sm text-gray-500">
+                  Add all the benefits of the product
+                </p>
 
                 {formData.benefits.map((benefit, index) => (
                   <div key={index} className="border p-4 rounded-md relative">
@@ -449,7 +509,14 @@ const handleObjectArrayChange = (
                           type="text"
                           value={benefit.title}
                           required
-                          onChange={(e) => handleObjectArrayChange(index, "benefits", "title", e.target.value)}
+                          onChange={(e) =>
+                            handleObjectArrayChange(
+                              index,
+                              "benefits",
+                              "title",
+                              e.target.value
+                            )
+                          }
                           placeholder="Benefit Title"
                           className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
@@ -465,7 +532,14 @@ const handleObjectArrayChange = (
                         <textarea
                           value={benefit.description}
                           required
-                          onChange={(e) => handleObjectArrayChange(index, "benefits", "description", e.target.value)}
+                          onChange={(e) =>
+                            handleObjectArrayChange(
+                              index,
+                              "benefits",
+                              "description",
+                              e.target.value
+                            )
+                          }
                           placeholder="Benefit Description"
                           rows={2}
                           className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
@@ -478,7 +552,9 @@ const handleObjectArrayChange = (
                 <button
                   type="button"
                   className="flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                  onClick={() => addArrayItem("benefits", { title: "", description: "" })}
+                  onClick={() =>
+                    addArrayItem("benefits", { title: "", description: "" })
+                  }
                 >
                   <PlusCircle className="h-4 w-4 mr-2" />
                   Add Benefit
@@ -486,13 +562,22 @@ const handleObjectArrayChange = (
               </div>
 
               {/* Ratings Tab */}
-              <div className={`space-y-4 ${activeTab !== "ratings" ? "hidden" : ""}`}>
+              <div
+                className={`space-y-4 ${
+                  activeTab !== "ratings" ? "hidden" : ""
+                }`}
+              >
                 <h3 className="text-lg font-medium">Product Ratings</h3>
-                <p className="text-sm text-gray-500">Set ratings for different aspects of the product (0-5)</p>
+                <p className="text-sm text-gray-500">
+                  Set ratings for different aspects of the product (0-5)
+                </p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="overallRating" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label
+                      htmlFor="overallRating"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
                       Overall Rating
                     </label>
                     <input
@@ -511,7 +596,10 @@ const handleObjectArrayChange = (
                   </div>
 
                   <div>
-                    <label htmlFor="ingredientsRating" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label
+                      htmlFor="ingredientsRating"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
                       Ingredients Rating
                     </label>
                     <input
@@ -530,7 +618,10 @@ const handleObjectArrayChange = (
                   </div>
 
                   <div>
-                    <label htmlFor="valueRating" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label
+                      htmlFor="valueRating"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
                       Value Rating
                     </label>
                     <input
@@ -549,7 +640,10 @@ const handleObjectArrayChange = (
                   </div>
 
                   <div>
-                    <label htmlFor="manufacturerRating" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label
+                      htmlFor="manufacturerRating"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
                       Manufacturer Rating
                     </label>
                     <input
@@ -568,7 +662,10 @@ const handleObjectArrayChange = (
                   </div>
 
                   <div>
-                    <label htmlFor="safetyRating" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label
+                      htmlFor="safetyRating"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
                       Safety Rating
                     </label>
                     <input
@@ -589,12 +686,18 @@ const handleObjectArrayChange = (
               </div>
 
               {/* Highlights Tab */}
-              <div className={`space-y-4 ${activeTab !== "highlights" ? "hidden" : ""}`}>
+              <div
+                className={`space-y-4 ${
+                  activeTab !== "highlights" ? "hidden" : ""
+                }`}
+              >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   {/* Brand Highlights */}
                   <div className="space-y-4">
                     <h3 className="text-lg font-medium">Brand Highlights</h3>
-                    <p className="text-sm text-gray-500">Key highlights about the brand</p>
+                    <p className="text-sm text-gray-500">
+                      Key highlights about the brand
+                    </p>
 
                     {formData.brandHighlights.map((highlight, index) => (
                       <div key={index} className="flex items-center gap-2">
@@ -602,14 +705,22 @@ const handleObjectArrayChange = (
                           type="text"
                           value={highlight}
                           required
-                          onChange={(e) => handleArrayChange(index, "brandHighlights", e.target.value)}
+                          onChange={(e) =>
+                            handleArrayChange(
+                              index,
+                              "brandHighlights",
+                              e.target.value
+                            )
+                          }
                           placeholder="Brand highlight"
                           className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
                         <button
                           type="button"
                           className="text-red-500"
-                          onClick={() => removeArrayItem("brandHighlights", index)}
+                          onClick={() =>
+                            removeArrayItem("brandHighlights", index)
+                          }
                           disabled={formData.brandHighlights.length <= 1}
                         >
                           <Trash2 className="h-5 w-5" />
@@ -630,7 +741,9 @@ const handleObjectArrayChange = (
                   {/* Key Ingredients */}
                   <div className="space-y-4">
                     <h3 className="text-lg font-medium">Key Ingredients</h3>
-                    <p className="text-sm text-gray-500">Main ingredients in the product</p>
+                    <p className="text-sm text-gray-500">
+                      Main ingredients in the product
+                    </p>
 
                     {formData.keyIngredients.map((ingredient, index) => (
                       <div key={index} className="flex items-center gap-2">
@@ -638,14 +751,22 @@ const handleObjectArrayChange = (
                           type="text"
                           value={ingredient}
                           required
-                          onChange={(e) => handleArrayChange(index, "keyIngredients", e.target.value)}
+                          onChange={(e) =>
+                            handleArrayChange(
+                              index,
+                              "keyIngredients",
+                              e.target.value
+                            )
+                          }
                           placeholder="Key ingredient"
                           className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
                         <button
                           type="button"
                           className="text-red-500"
-                          onClick={() => removeArrayItem("keyIngredients", index)}
+                          onClick={() =>
+                            removeArrayItem("keyIngredients", index)
+                          }
                           disabled={formData.keyIngredients.length <= 1}
                         >
                           <Trash2 className="h-5 w-5" />
@@ -670,7 +791,9 @@ const handleObjectArrayChange = (
                   {/* Pros */}
                   <div className="space-y-4">
                     <h3 className="text-lg font-medium">Pros</h3>
-                    <p className="text-sm text-gray-500">Positive aspects of the product</p>
+                    <p className="text-sm text-gray-500">
+                      Positive aspects of the product
+                    </p>
 
                     {formData.pros.map((pro, index) => (
                       <div key={index} className="flex items-center gap-2">
@@ -678,7 +801,9 @@ const handleObjectArrayChange = (
                           type="text"
                           value={pro}
                           required
-                          onChange={(e) => handleArrayChange(index, "pros", e.target.value)}
+                          onChange={(e) =>
+                            handleArrayChange(index, "pros", e.target.value)
+                          }
                           placeholder="Product pro"
                           className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
@@ -706,7 +831,9 @@ const handleObjectArrayChange = (
                   {/* Cons */}
                   <div className="space-y-4">
                     <h3 className="text-lg font-medium">Cons</h3>
-                    <p className="text-sm text-gray-500">Negative aspects of the product</p>
+                    <p className="text-sm text-gray-500">
+                      Negative aspects of the product
+                    </p>
 
                     {formData.cons.map((con, index) => (
                       <div key={index} className="flex items-center gap-2">
@@ -714,7 +841,9 @@ const handleObjectArrayChange = (
                           type="text"
                           value={con}
                           required
-                          onChange={(e) => handleArrayChange(index, "cons", e.target.value)}
+                          onChange={(e) =>
+                            handleArrayChange(index, "cons", e.target.value)
+                          }
                           placeholder="Product con"
                           className="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
@@ -742,9 +871,15 @@ const handleObjectArrayChange = (
               </div>
 
               {/* Ingredients Tab */}
-              <div className={`space-y-4 ${activeTab !== "ingredients" ? "hidden" : ""}`}>
+              <div
+                className={`space-y-4 ${
+                  activeTab !== "ingredients" ? "hidden" : ""
+                }`}
+              >
                 <h3 className="text-lg font-medium">Detailed Ingredients</h3>
-                <p className="text-sm text-gray-500">Add detailed information about each ingredient</p>
+                <p className="text-sm text-gray-500">
+                  Add detailed information about each ingredient
+                </p>
 
                 {formData.ingredients.map((ingredient, index) => (
                   <div key={index} className="border p-4 rounded-md relative">
@@ -768,7 +903,14 @@ const handleObjectArrayChange = (
                         <input
                           type="text"
                           value={ingredient.name}
-                          onChange={(e) => handleObjectArrayChange(index, "ingredients", "name", e.target.value)}
+                          onChange={(e) =>
+                            handleObjectArrayChange(
+                              index,
+                              "ingredients",
+                              "name",
+                              e.target.value
+                            )
+                          }
                           placeholder="Ingredient Name"
                           required
                           className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
@@ -785,7 +927,14 @@ const handleObjectArrayChange = (
                         <textarea
                           value={ingredient.description}
                           required
-                          onChange={(e) => handleObjectArrayChange(index, "ingredients", "description", e.target.value)}
+                          onChange={(e) =>
+                            handleObjectArrayChange(
+                              index,
+                              "ingredients",
+                              "description",
+                              e.target.value
+                            )
+                          }
                           placeholder="Ingredient Description"
                           rows={2}
                           className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
@@ -802,7 +951,14 @@ const handleObjectArrayChange = (
                         <textarea
                           value={ingredient.benefits}
                           required
-                          onChange={(e) => handleObjectArrayChange(index, "ingredients", "benefits", e.target.value)}
+                          onChange={(e) =>
+                            handleObjectArrayChange(
+                              index,
+                              "ingredients",
+                              "benefits",
+                              e.target.value
+                            )
+                          }
                           placeholder="Ingredient Benefits"
                           rows={2}
                           className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
@@ -815,7 +971,13 @@ const handleObjectArrayChange = (
                 <button
                   type="button"
                   className="flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                  onClick={() => addArrayItem("ingredients", { name: "", description: "", benefits: "" })}
+                  onClick={() =>
+                    addArrayItem("ingredients", {
+                      name: "",
+                      description: "",
+                      benefits: "",
+                    })
+                  }
                 >
                   <PlusCircle className="h-4 w-4 mr-2" />
                   Add Ingredient
@@ -823,10 +985,17 @@ const handleObjectArrayChange = (
               </div>
 
               {/* Details Tab */}
-              <div className={`space-y-4 ${activeTab !== "details" ? "hidden" : ""}`}>
+              <div
+                className={`space-y-4 ${
+                  activeTab !== "details" ? "hidden" : ""
+                }`}
+              >
                 <div className="grid grid-cols-1 gap-6">
                   <div>
-                    <label htmlFor="safety" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label
+                      htmlFor="safety"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
                       Safety
                     </label>
                     <textarea
@@ -842,7 +1011,10 @@ const handleObjectArrayChange = (
                   </div>
 
                   <div>
-                    <label htmlFor="effectiveness" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label
+                      htmlFor="effectiveness"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
                       Effectiveness
                     </label>
                     <textarea
@@ -858,7 +1030,10 @@ const handleObjectArrayChange = (
                   </div>
 
                   <div>
-                    <label htmlFor="howItWorks" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label
+                      htmlFor="howItWorks"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
                       How It Works
                     </label>
                     <textarea
@@ -874,7 +1049,10 @@ const handleObjectArrayChange = (
                   </div>
 
                   <div>
-                    <label htmlFor="conclusion" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label
+                      htmlFor="conclusion"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
                       Conclusion
                     </label>
                     <textarea
@@ -890,11 +1068,16 @@ const handleObjectArrayChange = (
                   </div>
 
                   <div className="border p-4 rounded-md">
-                    <h3 className="text-lg font-medium mb-4">Pricing Information</h3>
+                    <h3 className="text-lg font-medium mb-4">
+                      Pricing Information
+                    </h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div>
-                        <label htmlFor="pricing.singleBottle" className="block text-sm font-medium text-gray-700 mb-1">
+                        <label
+                          htmlFor="pricing.singleBottle"
+                          className="block text-sm font-medium text-gray-700 mb-1"
+                        >
                           Single Bottle Price
                         </label>
                         <input
@@ -909,7 +1092,10 @@ const handleObjectArrayChange = (
                       </div>
 
                       <div>
-                        <label htmlFor="pricing.threeBottles" className="block text-sm font-medium text-gray-700 mb-1">
+                        <label
+                          htmlFor="pricing.threeBottles"
+                          className="block text-sm font-medium text-gray-700 mb-1"
+                        >
                           Three Bottles Price
                         </label>
                         <input
@@ -924,7 +1110,10 @@ const handleObjectArrayChange = (
                       </div>
 
                       <div>
-                        <label htmlFor="pricing.sixBottles" className="block text-sm font-medium text-gray-700 mb-1">
+                        <label
+                          htmlFor="pricing.sixBottles"
+                          className="block text-sm font-medium text-gray-700 mb-1"
+                        >
                           Six Bottles Price
                         </label>
                         <input
@@ -941,11 +1130,16 @@ const handleObjectArrayChange = (
                   </div>
 
                   <div className="border p-4 rounded-md">
-                    <h3 className="text-lg font-medium mb-4">Manufacturer Information</h3>
+                    <h3 className="text-lg font-medium mb-4">
+                      Manufacturer Information
+                    </h3>
 
                     <div className="grid grid-cols-1 gap-4">
                       <div>
-                        <label htmlFor="manufacturerInfo.name" className="block text-sm font-medium text-gray-700 mb-1">
+                        <label
+                          htmlFor="manufacturerInfo.name"
+                          className="block text-sm font-medium text-gray-700 mb-1"
+                        >
                           Manufacturer Name
                         </label>
                         <input
@@ -991,7 +1185,7 @@ const handleObjectArrayChange = (
                           onChange={handleInputChange}
                           placeholder="About the manufacturer"
                           rows={3}
-                          required  
+                          required
                           className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
                       </div>
@@ -1001,9 +1195,15 @@ const handleObjectArrayChange = (
               </div>
 
               {/* FAQs Tab */}
-              <div className={`space-y-4 ${activeTab !== "faqs" ? "hidden" : ""}`}>
-                <h3 className="text-lg font-medium">Frequently Asked Questions</h3>
-                <p className="text-sm text-gray-500">Add FAQs about the product</p>
+              <div
+                className={`space-y-4 ${activeTab !== "faqs" ? "hidden" : ""}`}
+              >
+                <h3 className="text-lg font-medium">
+                  Frequently Asked Questions
+                </h3>
+                <p className="text-sm text-gray-500">
+                  Add FAQs about the product
+                </p>
 
                 {formData.faqs.map((faq, index) => (
                   <div key={index} className="border p-4 rounded-md relative">
@@ -1027,7 +1227,14 @@ const handleObjectArrayChange = (
                         <input
                           type="text"
                           value={faq.question}
-                          onChange={(e) => handleObjectArrayChange(index, "faqs", "question", e.target.value)}
+                          onChange={(e) =>
+                            handleObjectArrayChange(
+                              index,
+                              "faqs",
+                              "question",
+                              e.target.value
+                            )
+                          }
                           placeholder="FAQ Question"
                           required
                           className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
@@ -1043,7 +1250,14 @@ const handleObjectArrayChange = (
                         </label>
                         <textarea
                           value={faq.answer}
-                          onChange={(e) => handleObjectArrayChange(index, "faqs", "answer", e.target.value)}
+                          onChange={(e) =>
+                            handleObjectArrayChange(
+                              index,
+                              "faqs",
+                              "answer",
+                              e.target.value
+                            )
+                          }
                           placeholder="FAQ Answer"
                           rows={3}
                           required
@@ -1057,7 +1271,9 @@ const handleObjectArrayChange = (
                 <button
                   type="button"
                   className="flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                  onClick={() => addArrayItem("faqs", { question: "", answer: "" })}
+                  onClick={() =>
+                    addArrayItem("faqs", { question: "", answer: "" })
+                  }
                 >
                   <PlusCircle className="h-4 w-4 mr-2" />
                   Add FAQ
@@ -1065,9 +1281,15 @@ const handleObjectArrayChange = (
               </div>
 
               {/* Reviews Tab */}
-              <div className={`space-y-4 ${activeTab !== "reviews" ? "hidden" : ""}`}>
+              <div
+                className={`space-y-4 ${
+                  activeTab !== "reviews" ? "hidden" : ""
+                }`}
+              >
                 <h3 className="text-lg font-medium">Customer Reviews</h3>
-                <p className="text-sm text-gray-500">Add customer reviews for the product</p>
+                <p className="text-sm text-gray-500">
+                  Add customer reviews for the product
+                </p>
 
                 {formData.customerReviews.map((review, index) => (
                   <div key={index} className="border p-4 rounded-md relative">
@@ -1091,7 +1313,14 @@ const handleObjectArrayChange = (
                         <input
                           type="text"
                           value={review.name}
-                          onChange={(e) => handleObjectArrayChange(index, "customerReviews", "name", e.target.value)}
+                          onChange={(e) =>
+                            handleObjectArrayChange(
+                              index,
+                              "customerReviews",
+                              "name",
+                              e.target.value
+                            )
+                          }
                           placeholder="Customer Name"
                           required
                           className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
@@ -1109,7 +1338,12 @@ const handleObjectArrayChange = (
                           type="text"
                           value={review.location}
                           onChange={(e) =>
-                            handleObjectArrayChange(index, "customerReviews", "location", e.target.value)
+                            handleObjectArrayChange(
+                              index,
+                              "customerReviews",
+                              "location",
+                              e.target.value
+                            )
                           }
                           placeholder="e.g. New York, NY"
                           required
@@ -1128,7 +1362,12 @@ const handleObjectArrayChange = (
                           type="number"
                           value={review.rating}
                           onChange={(e) =>
-                            handleObjectArrayChange(index, "customerReviews", "rating", Number(e.target.value))
+                            handleObjectArrayChange(
+                              index,
+                              "customerReviews",
+                              "rating",
+                              Number(e.target.value)
+                            )
                           }
                           required
                           min="1"
@@ -1146,9 +1385,16 @@ const handleObjectArrayChange = (
                         </label>
                         <textarea
                           value={review.review}
-                          onChange={(e) => handleObjectArrayChange(index, "customerReviews", "review", e.target.value)}
+                          onChange={(e) =>
+                            handleObjectArrayChange(
+                              index,
+                              "customerReviews",
+                              "review",
+                              e.target.value
+                            )
+                          }
                           placeholder="Customer Review"
-                          rows={3}  
+                          rows={3}
                           required
                           className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                         />
@@ -1160,7 +1406,14 @@ const handleObjectArrayChange = (
                 <button
                   type="button"
                   className="flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                  onClick={() => addArrayItem("customerReviews", { name: "", location: "", rating: 5, review: "" })}
+                  onClick={() =>
+                    addArrayItem("customerReviews", {
+                      name: "",
+                      location: "",
+                      rating: 5,
+                      review: "",
+                    })
+                  }
                 >
                   <PlusCircle className="h-4 w-4 mr-2" />
                   Add Review
@@ -1168,7 +1421,9 @@ const handleObjectArrayChange = (
               </div>
 
               {/* CTA Tab */}
-              <div className={`space-y-4 ${activeTab !== "cta" ? "hidden" : ""}`}>
+              <div
+                className={`space-y-4 ${activeTab !== "cta" ? "hidden" : ""}`}
+              >
                 <CTASection formData={formData} setFormData={setFormData} />
               </div>
             </div>
@@ -1209,11 +1464,21 @@ const handleObjectArrayChange = (
                     howItWorks: "",
                     ingredients: [{ name: "", description: "", benefits: "" }],
                     faqs: [{ question: "", answer: "" }],
-                    customerReviews: [{ name: "", location: "", rating: 5, review: "" }],
+                    customerReviews: [
+                      { name: "", location: "", rating: 5, review: "" },
+                    ],
                     conclusion: "",
                     officialWebsite: "",
                     productImage: "",
-                    ctaButtons: [{ text: "Buy Now", url: "", type: "primary", position: "bottom", description: "" }],
+                    ctaButtons: [
+                      {
+                        text: "Buy Now",
+                        url: "",
+                        type: "primary",
+                        position: "bottom",
+                        description: "",
+                      },
+                    ],
                   })
                 }
                 disabled={loading}
@@ -1242,5 +1507,5 @@ const handleObjectArrayChange = (
         </div>
       </div>
     </div>
-  )
+  );
 }
