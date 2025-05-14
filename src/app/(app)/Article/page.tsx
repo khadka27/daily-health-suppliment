@@ -1,6 +1,9 @@
-import ArticleWrapper from "@/Components/ArticleWrapper"
+import ArticleWrapper from "@/Components/ArticleWrapper";
 
-export default function ArticlePage({ params }: { params: { id: string } }) {
-  return <ArticleWrapper id={params.id} />
+export default async function ArticlePage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  return <ArticleWrapper id={(await params).id} />;
 }
-
