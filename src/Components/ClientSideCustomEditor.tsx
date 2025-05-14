@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import dynamic from "next/dynamic"
 
 // Dynamically import the editor with no SSR
-const CKEditorComponent = dynamic(() => import("./CkEditor").then((mod) => mod.CKEditorComponent), {
+const CKEditorComponent = dynamic(() => import("./CkEditor").then((mod) => mod.default), {
   ssr: false,
   loading: () => <div className="border rounded-md p-4 min-h-[200px] bg-gray-50">Loading editor...</div>,
 })
@@ -26,5 +26,12 @@ export function EditorWrapper({ initialData = "<p>Hello world!</p>", onChange }:
     return <div className="border rounded-md p-4 min-h-[200px] bg-gray-50">Loading editor...</div>
   }
 
-  return <CKEditorComponent initialData={initialData} onChange={onChange} />
+  return <CKEditorComponent 
+    data={initialData} 
+    onChange={(event, editor) => {
+      if (onChange) {
+        onChange(editor.getData());
+      }
+    }} 
+  />
 }
