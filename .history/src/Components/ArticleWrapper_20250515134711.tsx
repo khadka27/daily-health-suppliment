@@ -14,7 +14,7 @@ const ArticleWrapper: React.FC<ArticleWrapperProps> = ({ id }) => {
     const fetchArticle = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`/api/article?id=${id}`);
+        const response = await fetch(`/api/Article?id=${id}`);
 
         if (!response.ok) {
           throw new Error(
