@@ -1,6 +1,5 @@
 "use client"
 
-import Image from "next/image"
 import { useState, useEffect } from "react"
 
 export default function LatestReview() {
@@ -109,7 +108,7 @@ export default function LatestReview() {
                 >
                   <div className="bg-white rounded-lg overflow-hidden shadow-md sm:shadow-lg h-full">
                     <div className="h-48 sm:h-56 md:h-64 lg:h-72 bg-gray-200 relative">
-                      <Image
+                      <img 
                         src={review.image || "/placeholder.svg"} 
                         alt={review.title}
                         className="w-full h-full object-cover"

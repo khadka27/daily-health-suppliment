@@ -6,7 +6,6 @@ import type React from "react"
 import { useState } from "react"
 import { PlusCircle, Trash2, Save, X } from "lucide-react"
 import CTASection from "./CtaSection"
-import Image from "next/image"
 
 interface ArticleData {
   id: string

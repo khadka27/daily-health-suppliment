@@ -5,9 +5,8 @@ import React, { Suspense } from 'react'
 export default function ArticleListingPage() {
   return (
     <div>
-      <Suspense fallback={<div>Loading articles...</div>}>
+      <Suspense fallback={<div>Loading articles...</div>}></Suspense>
       <ArticleListing/>
-      </Suspense>
     </div>
   )
 }

@@ -1,6 +1,5 @@
 "use client"
 
-import Image from "next/image"
 import Link from "next/link"
 
 interface HealthArticle {
@@ -67,7 +66,7 @@ export default function GeneralHealthListing() {
                 <div className="flex-shrink-0 w-full md:w-48">
                   <Link href="#">
                     <div className="border p-2 inline-block">
-                      <Image
+                      <img
                         src={"/bodybuilding.jpg"}
                         alt={article.title}
                         width="200"

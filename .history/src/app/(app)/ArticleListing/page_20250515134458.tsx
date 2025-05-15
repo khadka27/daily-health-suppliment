@@ -7,7 +7,6 @@ export default function ArticleListingPage() {
     <div>
       <Suspense fallback={<div>Loading articles...</div>}>
       <ArticleListing/>
-      </Suspense>
     </div>
   )
 }

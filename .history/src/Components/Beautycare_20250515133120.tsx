@@ -1,8 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 "use client"
 
-import Image from "next/image"
-
 export default function BeautyCareListing() {
   return (
     <div className="max-w-4xl mx-auto bg-white font-sans">
@@ -91,7 +89,7 @@ export default function BeautyCareListing() {
         {/* Image section - Enhanced with better shadows and styling */}
         <div className="mb-10">
           <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-3 max-w-2xl mx-auto shadow-lg">
-            <Image
+            <img
               src="/placeholder.svg"
               alt="Person taking beauty supplements"
               className="w-full rounded-lg"
@@ -122,7 +120,7 @@ export default function BeautyCareListing() {
         <div className="flex flex-col md:flex-row gap-8 border border-gray-100 p-6 rounded-xl mb-12 shadow-md hover:shadow-lg transition-shadow duration-300 bg-gradient-to-br from-white to-blue-50">
           <div className="md:w-1/3">
             <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-5 mx-auto max-w-[200px] shadow-md">
-              <Image src="/placeholder.svg" alt="BeautyVital Plus bottle" className="mx-auto" width="200" height="300" />
+              <img src="/placeholder.svg" alt="BeautyVital Plus bottle" className="mx-auto" width="200" height="300" />
             </div>
           </div>
           <div className="md:w-2/3">
@@ -140,16 +138,16 @@ export default function BeautyCareListing() {
             </button>
             <div className="flex gap-3 justify-center md:justify-start">
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-sm border border-blue-50">
-                <Image src="/placeholder.svg" alt="Certification 1" width="24" height="24" />
+                <img src="/placeholder.svg" alt="Certification 1" width="24" height="24" />
               </div>
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-sm border border-blue-50">
-                <Image src="/placeholder.svg" alt="Certification 2" width="24" height="24" />
+                <img src="/placeholder.svg" alt="Certification 2" width="24" height="24" />
               </div>
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-sm border border-blue-50">
-                <Image src="/placeholder.svg" alt="Certification 3" width="24" height="24" />
+                <img src="/placeholder.svg" alt="Certification 3" width="24" height="24" />
               </div>
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center shadow-sm border border-blue-50">
-                <Image src="/placeholder.svg" alt="Certification 4" width="24" height="24" />
+                <img src="/placeholder.svg" alt="Certification 4" width="24" height="24" />
               </div>
             </div>
           </div>
@@ -306,7 +304,7 @@ export default function BeautyCareListing() {
         <h2 className="text-2xl font-bold text-blue-500 mb-6">Do Beauty Care Supplements Really Work?</h2>
         <div className="mb-8">
           <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-3 max-w-2xl mx-auto shadow-lg mb-6">
-            <Image
+            <img
               src="/placeholder.svg"
               alt="Person discussing beauty supplements with doctor"
               className="w-full rounded-lg"

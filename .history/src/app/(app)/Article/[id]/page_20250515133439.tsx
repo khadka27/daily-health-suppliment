@@ -1,7 +1,7 @@
 
 import ArticleWrapper from "@/Components/ArticleWrapper"
 
-export default async function ArticlePage({ params }: { params: Promise<{ id: string }> }) {
+export default function ArticlePage({ params }: { params: Promise<{ id: string }> }) {
   return (
     <div className="min-h-screen bg-white">
     
