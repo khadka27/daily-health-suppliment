@@ -123,7 +123,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Add a GET handler to fetch articles
+// Add a GET handler to fetch articles...
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
