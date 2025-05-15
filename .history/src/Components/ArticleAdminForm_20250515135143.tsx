@@ -3,12 +3,17 @@
 
 import type React from "react";
 
-
+<<<<<<< HEAD
 import { useState } from "react"
 import { PlusCircle, Trash2, Save, X } from "lucide-react"
 import CTASection from "./CtaSection"
 import Image from "next/image"
-
+=======
+import { useState } from "react";
+import Image from "next/image";
+import { PlusCircle, Trash2, Save, X } from "lucide-react";
+import CTASection from "./CtaSection";
+>>>>>>> 9524fced3873d626b046fcff0cfcac2ebfa11c45
 
 interface ArticleData {
   id: string;

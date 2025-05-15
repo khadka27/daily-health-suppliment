@@ -6,10 +6,7 @@ export default function ArticleListingPage() {
   return (
     <div>
       
-      <Suspense fallback={<div>Loading articles...</div>}>
-  <ArticleListing />
-</Suspense>
-
+      <ArticleListing/>
     
     </div>
   )
