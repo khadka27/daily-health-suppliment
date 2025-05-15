@@ -123,7 +123,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Add a GET handler to fetch articles
+// Add a GET handler to fetch articles...
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -191,7 +191,7 @@ export async function GET(request: NextRequest) {
     ]);
 
     // Format the articles for the frontend
-    const formattedArticles = articles.map((article) => ({
+    const formattedArticles = articles.map((article: { id: any; title: string; description: any; productImage: any; updatedAt: { toISOString: () => any; }; createdAt: { toISOString: () => any; }; }) => ({
       id: article.id,
       title: article.title,
       // Generate a slug from the title for display purposes
