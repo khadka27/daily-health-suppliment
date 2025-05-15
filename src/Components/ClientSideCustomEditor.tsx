@@ -3,11 +3,13 @@
 // import { useState, useEffect } from "react"
 // import dynamic from "next/dynamic"
 
+
 // // Dynamically import the editor with no SSR
 // const CKEditorComponent = dynamic(() => import("./CkEditor").then((mod) => mod.CKEditorComponent), {
 //   ssr: false,
 //   loading: () => <div className="border rounded-md p-4 min-h-[200px] bg-gray-50">Loading editor...</div>,
 // })
+
 
 // interface EditorWrapperProps {
 //   initialData?: string
@@ -26,5 +28,4 @@
 //     return <div className="border rounded-md p-4 min-h-[200px] bg-gray-50">Loading editor...</div>
 //   }
 
-//   return <CKEditorComponent initialData={initialData} onChange={onChange} />
-// }
+
