@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // src/app/api/article/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import {prisma} from "@/lib/prisma";
 
 export async function POST(request: NextRequest) {
   try {
     const data = await request.json();
     console.log("Received article data");
 
-    // Destructure the incoming request data
+    // Destructure the incoming request data..
     const {
       id,
       title,
