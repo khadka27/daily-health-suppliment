@@ -5,7 +5,7 @@ export default async function ArticlePage({ params }: { params: { id: string } }
     <div className="min-h-screen bg-white">
       <main className="py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ArticleWrapper id={(await params).id} />
+          <ArticleWrapper id={params.id} />
         </div>
       </main>
     </div>

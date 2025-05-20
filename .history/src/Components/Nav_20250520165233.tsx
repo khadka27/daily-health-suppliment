@@ -76,8 +76,8 @@ export default function Navbar() {
             alt="Logo"
             width={320}
             height={52}
-            className="h-12 w-48 md:h-auto md:w-80 ml-2 md:ml-8"
-            priority
+            className="h-12 w-48 md:h-20 md:w-80 ml-2 md:ml-8"
+            pr
           />
           </Link>
         </div>

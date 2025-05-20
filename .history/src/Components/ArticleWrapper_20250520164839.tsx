@@ -78,6 +78,7 @@ const ArticleWrapper: React.FC<ArticleWrapperProps> = ({ id }) => {
         }
 
         const data = await response.json()
+        
 
         if (data.success) {
           setArticleData(data.article)
@@ -128,61 +129,6 @@ const ArticleWrapper: React.FC<ArticleWrapperProps> = ({ id }) => {
     )
   }
 
-  // Check if the article has minimal content
-  const hasMinimalContent =
-    !articleData.overview &&
-    !articleData.description &&
-    !articleData.howToTake &&
-    !articleData.safety &&
-    !articleData.effectiveness &&
-    !articleData.howItWorks &&
-    !articleData.conclusion &&
-    articleData.pros.length === 0 &&
-    articleData.cons.length === 0 &&
-    articleData.ingredients.length === 0
-
-  // If the article has minimal content, display a simplified view
-  if (hasMinimalContent) {
-    return (
-      <div className="article-container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {/* Display Article Title */}
-        <h1 className="text-3xl font-semibold text-center text-blue-600 mb-4">{articleData.title}</h1>
-
-        {/* Article Meta */}
-        <div className="text-center text-gray-600 mb-8">
-          {articleData.author && <span className="mr-4">By: {articleData.author}</span>}
-          {articleData.publishDate && <span>Published: {new Date(articleData.publishDate).toLocaleDateString()}</span>}
-        </div>
-
-        {/* Featured Image */}
-        {articleData.imageUrl && (
-          <div className="mb-6 text-center">
-            <Image
-              src={articleData.imageUrl || "/placeholder.svg"}
-              alt={articleData.title}
-              width={800}
-              height={400}
-              className="mx-auto rounded-lg shadow-md"
-            />
-          </div>
-        )}
-
-        <div className="bg-blue-50 border border-blue-200 text-blue-700 p-6 rounded-md text-center my-8">
-          <h2 className="text-xl font-semibold mb-3">Content Coming Soon</h2>
-          <p>
-            This article is currently being developed. Check back soon for detailed information about{" "}
-            {articleData.title}.
-          </p>
-        </div>
-
-        <div className="text-center text-gray-500 text-sm mt-8">
-          <p>Last updated: {new Date(articleData.updatedAt).toLocaleDateString()}</p>
-        </div>
-      </div>
-    )
-  }
-
-  // Regular full content view
   return (
     <div className="article-container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
       {/* Featured Image */}
@@ -232,21 +178,15 @@ const ArticleWrapper: React.FC<ArticleWrapperProps> = ({ id }) => {
       )}
 
       {/* Ratings Section */}
-      {(articleData.overallRating > 0 ||
-        articleData.ingredientsRating > 0 ||
-        articleData.valueRating > 0 ||
-        articleData.manufacturerRating > 0 ||
-        articleData.safetyRating > 0) && (
+      {articleData.overallRating > 0 && (
         <section className="mb-8">
           <h2 className="text-2xl font-bold text-blue-600 mb-4">Ratings</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {articleData.overallRating > 0 && (
-              <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
-                <p className="text-gray-700">
-                  <span className="font-semibold">Overall Rating:</span> {articleData.overallRating} / 5
-                </p>
-              </div>
-            )}
+            <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+              <p className="text-gray-700">
+                <span className="font-semibold">Overall Rating:</span> {articleData.overallRating} / 5
+              </p>
+            </div>
             {articleData.ingredientsRating > 0 && (
               <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
                 <p className="text-gray-700">
@@ -358,7 +298,7 @@ const ArticleWrapper: React.FC<ArticleWrapperProps> = ({ id }) => {
       )}
 
       {/* Pricing */}
-      {(articleData.pricing?.singleBottle || articleData.pricing?.threeBottles || articleData.pricing?.sixBottles) && (
+      {articleData.pricing && (
         <section className="mb-8">
           <h2 className="text-2xl font-bold text-blue-600 mb-4">Pricing</h2>
           <div className="bg-gray-50 p-4 rounded-lg">
@@ -384,9 +324,7 @@ const ArticleWrapper: React.FC<ArticleWrapperProps> = ({ id }) => {
       )}
 
       {/* Manufacturer Information */}
-      {(articleData.manufacturerInfo?.name ||
-        articleData.manufacturerInfo?.location ||
-        articleData.manufacturerInfo?.description) && (
+      {articleData.manufacturerInfo && (
         <section className="mb-8">
           <h2 className="text-2xl font-bold text-blue-600 mb-4">Manufacturer</h2>
           <div className="bg-gray-50 p-4 rounded-lg">
@@ -485,10 +423,6 @@ const ArticleWrapper: React.FC<ArticleWrapperProps> = ({ id }) => {
           </a>
         </section>
       )}
-
-      <div className="text-center text-gray-500 text-sm mt-8">
-        <p>Last updated: {new Date(articleData.updatedAt).toLocaleDateString()}</p>
-      </div>
     </div>
   )
 }
