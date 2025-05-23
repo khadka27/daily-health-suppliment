@@ -1,39 +1,43 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { v4 as uuidv4 } from "uuid"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { toast } from "@/Components/ui/use-toast"
-import { SectionEditor } from "@/Components/block-editor/section-editor"
-import { ArticleRenderer } from "@/Components/article-renderer"
-import type { Article, Block } from "@/types/article"
-import Image from "next/image"
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { v4 as uuidv4 } from "uuid";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { toast } from "@/components/ui/use-toast";
+import { SectionEditor } from "@/components/block-editor/section-editor";
+import { ArticleRenderer } from "@/components/article-renderer";
+import type { Article, Block } from "@/types/article";
+import Image from "next/image";
 
 // Helper function to group blocks into sections
 const groupBlocksIntoSections = (blocks: Block[]): Block[][] => {
-  const sections: Block[][] = []
-  let currentSection: Block[] = []
+  const sections: Block[][] = [];
+  let currentSection: Block[] = [];
 
   blocks.forEach((block) => {
     // Start a new section if this is a level 2 heading and we already have blocks
-    if (block.type === "heading" && block.level === 2 && currentSection.length > 0) {
-      sections.push([...currentSection])
-      currentSection = [block]
+    if (
+      block.type === "heading" &&
+      block.level === 2 &&
+      currentSection.length > 0
+    ) {
+      sections.push([...currentSection]);
+      currentSection = [block];
     } else {
-      currentSection.push(block)
+      currentSection.push(block);
     }
-  })
+  });
 
   // Add the last section if it has blocks
   if (currentSection.length > 0) {
-    sections.push(currentSection)
+    sections.push(currentSection);
   }
 
   // If no sections were created, create a default one
@@ -50,91 +54,98 @@ const groupBlocksIntoSections = (blocks: Block[]): Block[][] => {
         type: "paragraph",
         content: "",
       },
-    ])
+    ]);
   }
 
-  return sections
-}
+  return sections;
+};
 
-export default function EditArticlePage({ params }: { params: { slug: string } }) {
-  const router = useRouter()
-  const [isPreview, setIsPreview] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
-  const [title, setTitle] = useState("")
-  const [author, setAuthor] = useState("")
-  const [imageUrl, setImageUrl] = useState("")
-  const [sections, setSections] = useState<Block[][]>([])
-  const [originalSlug, setOriginalSlug] = useState("")
+export default function EditArticlePage({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const router = useRouter();
+  const [isPreview, setIsPreview] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [sections, setSections] = useState<Block[][]>([]);
+  const [originalSlug, setOriginalSlug] = useState("");
 
   useEffect(() => {
     const fetchArticle = async () => {
       try {
-        const response = await fetch(`/api/articles/${params.slug}`)
+        const response = await fetch(`/api/articles/${params.slug}`);
 
         if (!response.ok) {
-          throw new Error("Failed to fetch article")
+          throw new Error("Failed to fetch article");
         }
 
-        const article: Article = await response.json()
+        const article: Article = await response.json();
 
-        setTitle(article.title)
-        setAuthor(article.author)
-        setImageUrl(article.imageUrl || "")
+        setTitle(article.title);
+        setAuthor(article.author);
+        setImageUrl(article.imageUrl || "");
 
         // Convert old CTA format to block if needed
-        if (article.cta && !article.blocks.some((block) => block.type === "cta")) {
+        if (
+          article.cta &&
+          !article.blocks.some((block) => block.type === "cta")
+        ) {
           article.blocks.push({
             id: crypto.randomUUID(),
             type: "cta",
             content: "",
             ctaText: article.cta.text,
             ctaLink: article.cta.link,
-          })
+          });
         }
 
         // Group blocks into sections
-        setSections(groupBlocksIntoSections(article.blocks || []))
-        setOriginalSlug(article.slug)
+        setSections(groupBlocksIntoSections(article.blocks || []));
+        setOriginalSlug(article.slug);
       } catch (error) {
-        console.error("Error fetching article:", error)
+        console.error("Error fetching article:", error);
         toast({
           title: "Error",
           description: "Failed to fetch article. Please try again.",
           variant: "destructive",
-        })
+        });
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
-    fetchArticle()
-  }, [params.slug])
+    fetchArticle();
+  }, [params.slug]);
 
   // Flatten sections into blocks for saving and preview
   const flattenSections = (): Block[] => {
-    return sections.flat()
-  }
+    return sections.flat();
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!title || !author || sections.length === 0) {
       toast({
         title: "Validation Error",
         description: "Please fill in all required fields and add some content",
         variant: "destructive",
-      })
-      return
+      });
+      return;
     }
 
     try {
-      setIsSubmitting(true)
+      setIsSubmitting(true);
 
       const newSlug = title
         .toLowerCase()
         .replace(/\s+/g, "-")
-        .replace(/[^\w-]+/g, "")
+        .replace(/[^\w-]+/g, "");
 
       const article: Partial<Article> = {
         title,
@@ -142,7 +153,7 @@ export default function EditArticlePage({ params }: { params: { slug: string } }
         blocks: flattenSections(),
         author,
         imageUrl: imageUrl || undefined,
-      }
+      };
 
       const response = await fetch(`/api/articles/${originalSlug}`, {
         method: "PUT",
@@ -150,67 +161,71 @@ export default function EditArticlePage({ params }: { params: { slug: string } }
           "Content-Type": "application/json",
         },
         body: JSON.stringify(article),
-      })
+      });
 
       if (!response.ok) {
-        throw new Error("Failed to update article")
+        throw new Error("Failed to update article");
       }
 
       toast({
         title: "Success",
         description: "Article updated successfully",
-      })
+      });
 
       // If the slug changed, redirect to the new URL
       if (newSlug !== originalSlug) {
-        router.push(`/articles/${newSlug}`)
+        router.push(`/articles/${newSlug}`);
       } else {
-        router.push(`/articles/${originalSlug}`)
+        router.push(`/articles/${originalSlug}`);
       }
 
-      router.refresh()
+      router.refresh();
     } catch (error) {
-      console.error("Error updating article:", error)
+      console.error("Error updating article:", error);
       toast({
         title: "Error",
         description: "Failed to update article. Please try again.",
         variant: "destructive",
-      })
+      });
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const handleDelete = async () => {
-    if (!confirm("Are you sure you want to delete this article? This action cannot be undone.")) {
-      return
+    if (
+      !confirm(
+        "Are you sure you want to delete this article? This action cannot be undone."
+      )
+    ) {
+      return;
     }
 
     try {
       const response = await fetch(`/api/articles/${originalSlug}`, {
         method: "DELETE",
-      })
+      });
 
       if (!response.ok) {
-        throw new Error("Failed to delete article")
+        throw new Error("Failed to delete article");
       }
 
       toast({
         title: "Success",
         description: "Article deleted successfully",
-      })
+      });
 
-      router.push("/")
-      router.refresh()
+      router.push("/");
+      router.refresh();
     } catch (error) {
-      console.error("Error deleting article:", error)
+      console.error("Error deleting article:", error);
       toast({
         title: "Error",
         description: "Failed to delete article. Please try again.",
         variant: "destructive",
-      })
+      });
     }
-  }
+  };
 
   if (isLoading) {
     return (
@@ -219,7 +234,7 @@ export default function EditArticlePage({ params }: { params: { slug: string } }
           <p className="text-lg">Loading article...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -227,7 +242,9 @@ export default function EditArticlePage({ params }: { params: { slug: string } }
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Edit Article</h1>
         <div className="flex space-x-2">
-          <Button onClick={() => setIsPreview(!isPreview)}>{isPreview ? "Edit" : "Preview"}</Button>
+          <Button onClick={() => setIsPreview(!isPreview)}>
+            {isPreview ? "Edit" : "Preview"}
+          </Button>
         </div>
       </div>
 
@@ -236,7 +253,11 @@ export default function EditArticlePage({ params }: { params: { slug: string } }
           <CardContent className="pt-6">
             {imageUrl && (
               <div className="aspect-video w-full overflow-hidden rounded-lg mb-6">
-                <Image src={imageUrl || "/placeholder.svg"} alt={title} className="w-full h-full object-cover" />
+                <Image
+                  src={imageUrl || "/placeholder.svg"}
+                  alt={title}
+                  className="w-full h-full object-cover"
+                />
               </div>
             )}
 
@@ -289,7 +310,8 @@ export default function EditArticlePage({ params }: { params: { slug: string } }
                     alt="Featured image"
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      e.currentTarget.src = "/abstract-geometric-placeholder.png"
+                      e.currentTarget.src =
+                        "/abstract-geometric-placeholder.png";
                     }}
                   />
                 </div>
@@ -299,13 +321,26 @@ export default function EditArticlePage({ params }: { params: { slug: string } }
             <div className="space-y-2">
               <Label>Content *</Label>
               <div className="bg-blue-50 p-4 rounded-md mb-4 text-sm">
-                <p className="font-medium text-blue-800">Section Editor Tips:</p>
+                <p className="font-medium text-blue-800">
+                  Section Editor Tips:
+                </p>
                 <ul className="list-disc pl-5 mt-2 text-blue-700 space-y-1">
                   <li>Drag and drop entire sections to reposition them</li>
-                  <li>Each section starts with a heading and can contain multiple blocks</li>
-                  <li>Click the + button at the bottom of a section to add a new section</li>
-                  <li>All blocks within a section move together when you drag the section</li>
-                  <li>Use the up/down buttons on the left side to reorder sections</li>
+                  <li>
+                    Each section starts with a heading and can contain multiple
+                    blocks
+                  </li>
+                  <li>
+                    Click the + button at the bottom of a section to add a new
+                    section
+                  </li>
+                  <li>
+                    All blocks within a section move together when you drag the
+                    section
+                  </li>
+                  <li>
+                    Use the up/down buttons on the left side to reorder sections
+                  </li>
                 </ul>
               </div>
               <SectionEditor sections={sections} onChange={setSections} />
@@ -319,12 +354,17 @@ export default function EditArticlePage({ params }: { params: { slug: string } }
             <Button type="button" variant="outline" asChild>
               <Link href={`/articles/${originalSlug}`}>Cancel</Link>
             </Button>
-            <Button type="button" variant="destructive" onClick={handleDelete} className="ml-auto">
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={handleDelete}
+              className="ml-auto"
+            >
               Delete Article
             </Button>
           </div>
         </form>
       )}
     </div>
-  )
+  );
 }

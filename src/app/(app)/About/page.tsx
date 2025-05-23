@@ -1,10 +1,10 @@
-import AboutUs from '@/Components/AboutUs'
-import React from 'react'
+import AboutUs from "@/components/AboutUs";
+import React from "react";
 
 export default function About() {
   return (
     <div>
-      <AboutUs/>
+      <AboutUs />
     </div>
-  )
+  );
 }

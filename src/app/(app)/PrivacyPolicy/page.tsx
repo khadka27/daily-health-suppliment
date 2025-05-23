@@ -1,11 +1,10 @@
-import PrivacyPolicy from '@/Components/PrivacyPolicy'
-import React from 'react'
+import PrivacyPolicy from "@/components/PrivacyPolicy";
+import React from "react";
 
 export default function PrivacyPolicyPage() {
   return (
     <div>
-        <PrivacyPolicy/>
-      
+      <PrivacyPolicy />
     </div>
-  )
+  );
 }

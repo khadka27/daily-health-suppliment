@@ -1,50 +1,50 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { toast } from "@/Components/ui/use-toast"
-import { SectionEditor } from "@/Components/block-editor/section-editor"
-import { ArticleRenderer } from "@/Components/article-renderer"
-import { ProductSetupWizard } from "@/Components/product-setup-wizard"
-import type { Article, Block } from "@/types/article"
-import Image from "next/image"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { toast } from "@/components/ui/use-toast";
+import { SectionEditor } from "@/components/block-editor/section-editor";
+import { ArticleRenderer } from "@/components/article-renderer";
+import { ProductSetupWizard } from "@/components/product-setup-wizard";
+import type { Article, Block } from "@/types/article";
+import Image from "next/image";
 
 export default function CreateArticlePage() {
-  const router = useRouter()
-  const [isPreview, setIsPreview] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [showSetupWizard, setShowSetupWizard] = useState(true)
-  const [title, setTitle] = useState("")
-  const [author, setAuthor] = useState("")
-  const [imageUrl, setImageUrl] = useState("")
-  const [sections, setSections] = useState<Block[][]>([])
+  const router = useRouter();
+  const [isPreview, setIsPreview] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSetupWizard, setShowSetupWizard] = useState(true);
+  const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [sections, setSections] = useState<Block[][]>([]);
 
   // Flatten sections into blocks for saving and preview
   const flattenSections = (): Block[] => {
-    return sections.flat()
-  }
+    return sections.flat();
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!title || !author || sections.length === 0) {
       toast({
         title: "Validation Error",
         description: "Please fill in all required fields and add some content",
         variant: "destructive",
-      })
-      return
+      });
+      return;
     }
 
     try {
-      setIsSubmitting(true)
+      setIsSubmitting(true);
 
       const article: Partial<Article> = {
         title,
@@ -56,7 +56,7 @@ export default function CreateArticlePage() {
         author,
         publishDate: new Date().toISOString(),
         imageUrl: imageUrl || undefined,
-      }
+      };
 
       const response = await fetch("/api/articles", {
         method: "POST",
@@ -64,36 +64,39 @@ export default function CreateArticlePage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(article),
-      })
+      });
 
       if (!response.ok) {
-        throw new Error("Failed to create article")
+        throw new Error("Failed to create article");
       }
 
       toast({
         title: "Success",
         description: "Article created successfully",
-      })
+      });
 
-      router.push("/")
-      router.refresh()
+      router.push("/");
+      router.refresh();
     } catch (error) {
-      console.error("Error creating article:", error)
+      console.error("Error creating article:", error);
       toast({
         title: "Error",
         description: "Failed to create article. Please try again.",
         variant: "destructive",
-      })
+      });
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
-  const handleSetupComplete = (productName: string, generatedSections: Block[][]) => {
-    setTitle(`${productName} Review: Is It Worth It?`)
-    setSections(generatedSections)
-    setShowSetupWizard(false)
-  }
+  const handleSetupComplete = (
+    productName: string,
+    generatedSections: Block[][]
+  ) => {
+    setTitle(`${productName} Review: Is It Worth It?`);
+    setSections(generatedSections);
+    setShowSetupWizard(false);
+  };
 
   if (showSetupWizard) {
     return (
@@ -102,9 +105,12 @@ export default function CreateArticlePage() {
           <h1 className="text-3xl font-bold">Create Product Review</h1>
         </div>
 
-        <ProductSetupWizard onComplete={handleSetupComplete} onCancel={() => router.push("/")} />
+        <ProductSetupWizard
+          onComplete={handleSetupComplete}
+          onCancel={() => router.push("/")}
+        />
       </div>
-    )
+    );
   }
 
   return (
@@ -112,7 +118,9 @@ export default function CreateArticlePage() {
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Create Product Review</h1>
         <div className="flex space-x-2">
-          <Button onClick={() => setIsPreview(!isPreview)}>{isPreview ? "Edit" : "Preview"}</Button>
+          <Button onClick={() => setIsPreview(!isPreview)}>
+            {isPreview ? "Edit" : "Preview"}
+          </Button>
         </div>
       </div>
 
@@ -121,7 +129,11 @@ export default function CreateArticlePage() {
           <CardContent className="pt-6">
             {imageUrl && (
               <div className="aspect-video w-full overflow-hidden rounded-lg mb-6">
-                <Image src={imageUrl || "/placeholder.svg"} alt={title} className="w-full h-full object-cover" />
+                <Image
+                  src={imageUrl || "/placeholder.svg"}
+                  alt={title}
+                  className="w-full h-full object-cover"
+                />
               </div>
             )}
 
@@ -174,7 +186,8 @@ export default function CreateArticlePage() {
                     alt="Featured image"
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      e.currentTarget.src = "/abstract-geometric-placeholder.png"
+                      e.currentTarget.src =
+                        "/abstract-geometric-placeholder.png";
                     }}
                   />
                 </div>
@@ -182,13 +195,22 @@ export default function CreateArticlePage() {
             </div>
 
             <div className="bg-blue-50 p-4 rounded-md mb-4 text-sm">
-              <p className="font-medium text-blue-800">Product Review Editor Tips:</p>
+              <p className="font-medium text-blue-800">
+                Product Review Editor Tips:
+              </p>
               <ul className="list-disc pl-5 mt-2 text-blue-700 space-y-1">
                 <li>Drag and drop entire sections to reposition them</li>
                 <li>Use the copy button to duplicate sections</li>
-                <li>CTA buttons are automatically added after every 3 sections</li>
-                <li>All blocks within a section move together when you drag the section</li>
-                <li>Use the up/down buttons on the left side to reorder sections</li>
+                <li>
+                  CTA buttons are automatically added after every 3 sections
+                </li>
+                <li>
+                  All blocks within a section move together when you drag the
+                  section
+                </li>
+                <li>
+                  Use the up/down buttons on the left side to reorder sections
+                </li>
               </ul>
             </div>
 
@@ -209,5 +231,5 @@ export default function CreateArticlePage() {
         </form>
       )}
     </div>
-  )
+  );
 }

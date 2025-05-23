@@ -1,55 +1,61 @@
-import type { Metadata } from "next"
-import Image from "next/image"
-import { ArticleRenderer } from "@/Components/article-renderer"
-import { notFound } from "next/navigation"
-import type { Article } from "@/types/article"
+import type { Metadata } from "next";
+import Image from "next/image";
+import { ArticleRenderer } from "@/components/article-renderer";
+import { notFound } from "next/navigation";
+import type { Article } from "@/types/article";
 
 interface ArticlePageProps {
   params: {
-    slug: string
-  }
+    slug: string;
+  };
 }
 
 async function getArticle(slug: string): Promise<Article | null> {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || ""}/api/articles/${slug}`, {
-      cache: "no-store",
-    })
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL || ""}/api/articles/${slug}`,
+      {
+        cache: "no-store",
+      }
+    );
 
     if (!res.ok) {
-      return null
+      return null;
     }
 
-    return res.json()
+    return res.json();
   } catch (error) {
-    console.error("Error fetching article:", error)
-    return null
+    console.error("Error fetching article:", error);
+    return null;
   }
 }
 
-export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
-  const article = await getArticle(params.slug)
+export async function generateMetadata({
+  params,
+}: ArticlePageProps): Promise<Metadata> {
+  const article = await getArticle(params.slug);
 
   if (!article) {
     return {
       title: "Article Not Found",
-    }
+    };
   }
 
   return {
     title: article.title,
-    description: article.blocks[0]?.content || "Read this article on our website",
+    description:
+      article.blocks[0]?.content || "Read this article on our website",
     openGraph: {
       images: article.imageUrl ? [article.imageUrl] : [],
     },
-  }
+  };
 }
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
-  const article = await getArticle(params.slug)
+  const article = await getArticle(params.slug);
 
   if (!article) {
-    notFound()
+    notFound();
   }
 
   return (
@@ -69,7 +75,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         )}
 
         <div className="p-6 md:p-8">
-          <h1 className="text-4xl font-extrabold mb-4 text-gray-800">{article.title}</h1>
+          <h1 className="text-4xl font-extrabold mb-4 text-gray-800">
+            {article.title}
+          </h1>
 
           <div className="text-gray-600 mb-8 font-bold text-lg border-b pb-4 border-gray-100">
             By <span className="text-indigo-600">{article.author}</span> •{" "}
@@ -80,5 +88,5 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         </div>
       </article>
     </div>
-  )
+  );
 }

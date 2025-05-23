@@ -1,19 +1,20 @@
-"use client"
+"use client";
 
-import ArticlePostFullEditor from "@/Components/AdminFullEditor"
-import AdminSidebar from "@/Components/AdminSidebar"
-import ArticleAdminForm from "@/Components/ArticleAdminForm"
-import DashboardSection from "@/Components/DashboardSection"
-import { useState } from "react"
-
-
+import ArticlePostFullEditor from "@/components/AdminFullEditor";
+import AdminSidebar from "@/components/AdminSidebar";
+import ArticleAdminForm from "@/components/ArticleAdminForm";
+import DashboardSection from "@/components/DashboardSection";
+import { useState } from "react";
 
 export default function AdminPage() {
-  const [activeSection, setActiveSection] = useState("articles")
+  const [activeSection, setActiveSection] = useState("articles");
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <AdminSidebar activeSection={activeSection} setActiveSection={setActiveSection} />
+      <AdminSidebar
+        activeSection={activeSection}
+        setActiveSection={setActiveSection}
+      />
       <div className="lg:ml-64">
         <header className="bg-white shadow-sm">
           <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
@@ -39,5 +40,5 @@ export default function AdminPage() {
         </main>
       </div>
     </div>
-  )
+  );
 }

@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import ClientOnly from "@/Components/ClientOnly";
-import AdminContent from "@/Components/AdminContent";
+import ClientOnly from "@/components/ClientOnly";
+import AdminContent from "@/components/AdminContent";
 
 export default function AdminPage() {
   return (

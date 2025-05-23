@@ -1,6 +1,10 @@
-import ArticleWrapper from "@/Components/ArticleWrapper"
+import ArticleWrapper from "@/components/ArticleWrapper";
 
-export default async function ArticlePage({ params }: { params: { id: string } }) {
+export default async function ArticlePage({
+  params,
+}: {
+  params: { id: string };
+}) {
   return (
     <div className="min-h-screen bg-white">
       <main className="py-6">
@@ -9,5 +13,5 @@ export default async function ArticlePage({ params }: { params: { id: string } }
         </div>
       </main>
     </div>
-  )
+  );
 }
