@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "@/Components/ui/use-toast";
 import { SectionEditor } from "@/Components/block-editor/section-editor";
 import { ArticleRenderer } from "@/Components/article-renderer";
-import { ProductSetupWizard } from "@/Components/product-setup-wizard";
+import { ProductSetupWizard } from "@/components/product-setup-wizard";
 import type { Article, Block } from "@/types/article";
 import Image from "next/image";
 
@@ -27,7 +27,7 @@ export default function CreateArticlePage() {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [imageUrl, setImageUrl] = useState("");
-  const [sections, setSections] = useState<import("@/types/article").Block[][]>([]);
+  const [sections, setSections] = useState<Block[][]>([]);
 
   // Flatten sections into blocks for saving and preview
   const flattenSections = (): Block[] => {
@@ -52,10 +52,9 @@ export default function CreateArticlePage() {
       const article: Partial<Article> = {
         title,
         slug: title
-        .toLowerCase()
-        .replace(/\s+/g, "-")
-        .replace(/[^\w-]+/g, ""),
-
+          .toLowerCase()
+          .replace(/\s+/g, "-")
+          .replace(/[^\w-]+/g, ""),
         blocks: flattenSections(),
         author,
         publishDate: new Date().toISOString(),
@@ -116,17 +115,11 @@ export default function CreateArticlePage() {
           type: "heading",
           level: 2,
           content: "Introduction",
-          newBlock: { ingredients: 0, value: 0, manufacturer: 0, safety: 0 },
-          order: 0,
-          articleId: "",
         },
         {
           id: crypto.randomUUID(),
           type: "paragraph",
           content: "",
-          newBlock: { ingredients: 0, value: 0, manufacturer: 0, safety: 0 },
-          order: 1,
-          articleId: "",
         },
       ],
     ]
@@ -232,7 +225,8 @@ export default function CreateArticlePage() {
                     height={400}
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      e.currentTarget.src = "/abstract-geometric-placeholder.png";
+                      e.currentTarget.src =
+                        "/abstract-geometric-placeholder.png";
                     }}
                   />
                 </div>

@@ -232,7 +232,8 @@ export default function CreateArticlePage() {
                     height={400}
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      e.currentTarget.src = "/abstract-geometric-placeholder.png";
+                      e.currentTarget.src =
+                        "/abstract-geometric-placeholder.png";
                     }}
                   />
                 </div>

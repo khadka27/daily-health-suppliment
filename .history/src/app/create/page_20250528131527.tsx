@@ -52,10 +52,9 @@ export default function CreateArticlePage() {
       const article: Partial<Article> = {
         title,
         slug: title
-        .toLowerCase()
-        .replace(/\s+/g, "-")
-        .replace(/[^\w-]+/g, ""),
-
+          .toLowerCase()
+          .replace(/\s+/g, "-")
+          .replace(/[^\w-]+/g, ""),
         blocks: flattenSections(),
         author,
         publishDate: new Date().toISOString(),
@@ -232,7 +231,8 @@ export default function CreateArticlePage() {
                     height={400}
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      e.currentTarget.src = "/abstract-geometric-placeholder.png";
+                      e.currentTarget.src =
+                        "/abstract-geometric-placeholder.png";
                     }}
                   />
                 </div>

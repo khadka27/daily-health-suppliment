@@ -27,7 +27,7 @@ export default function CreateArticlePage() {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [imageUrl, setImageUrl] = useState("");
-  const [sections, setSections] = useState<import("@/types/article").Block[][]>([]);
+  const [sections, setSections] = useState<Block[][]>([]);
 
   // Flatten sections into blocks for saving and preview
   const flattenSections = (): Block[] => {
@@ -52,10 +52,9 @@ export default function CreateArticlePage() {
       const article: Partial<Article> = {
         title,
         slug: title
-        .toLowerCase()
-        .replace(/\s+/g, "-")
-        .replace(/[^\w-]+/g, ""),
-
+          .toLowerCase()
+          .replace(/\s+/g, "-")
+          .replace(/[^\w-]+/g, ""),
         blocks: flattenSections(),
         author,
         publishDate: new Date().toISOString(),
@@ -116,7 +115,7 @@ export default function CreateArticlePage() {
           type: "heading",
           level: 2,
           content: "Introduction",
-          newBlock: { ingredients: 0, value: 0, manufacturer: 0, safety: 0 },
+          newBlock: true,
           order: 0,
           articleId: "",
         },
@@ -124,7 +123,7 @@ export default function CreateArticlePage() {
           id: crypto.randomUUID(),
           type: "paragraph",
           content: "",
-          newBlock: { ingredients: 0, value: 0, manufacturer: 0, safety: 0 },
+          newBlock: true,
           order: 1,
           articleId: "",
         },
@@ -232,7 +231,8 @@ export default function CreateArticlePage() {
                     height={400}
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      e.currentTarget.src = "/abstract-geometric-placeholder.png";
+                      e.currentTarget.src =
+                        "/abstract-geometric-placeholder.png";
                     }}
                   />
                 </div>

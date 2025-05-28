@@ -1,23 +1,20 @@
-/* eslint-disable react/no-unescaped-entities */
-"use client";
+"use client"
 
-import type React from "react";
+import type React from "react"
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { toast } from "@/Components/ui/use-toast";
-import { SectionEditor } from "@/Components/block-editor/section-editor";
-import { ArticleRenderer } from "@/Components/article-renderer";
-import { ProductSetupWizard } from "@/Components/product-setup-wizard";
-import type { Article, Block } from "@/types/article";
-import Image from "next/image";
-
-// Remove duplicate Block and Article interface definitions and ProductSetupWizard mock
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { toast } from "@/Components/ui/use-toast"
+import { SectionEditor } from "@/Components/block-editor/section-editor"
+import { ArticleRenderer } from "@/Components/article-renderer"
+import { ProductSetupWizard } from "@/Components/product-setup-wizard"
+import type { Article, Block } from "@/types/article"
+import Image from "next/image"
 
 export default function CreateArticlePage() {
   const router = useRouter();
@@ -27,7 +24,7 @@ export default function CreateArticlePage() {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [imageUrl, setImageUrl] = useState("");
-  const [sections, setSections] = useState<import("@/types/article").Block[][]>([]);
+  const [sections, setSections] = useState<Block[][]>([]);
 
   // Flatten sections into blocks for saving and preview
   const flattenSections = (): Block[] => {
@@ -52,10 +49,9 @@ export default function CreateArticlePage() {
       const article: Partial<Article> = {
         title,
         slug: title
-        .toLowerCase()
-        .replace(/\s+/g, "-")
-        .replace(/[^\w-]+/g, ""),
-
+          .toLowerCase()
+          .replace(/\s+/g, "-")
+          .replace(/[^\w-]+/g, ""),
         blocks: flattenSections(),
         author,
         publishDate: new Date().toISOString(),
@@ -81,11 +77,8 @@ export default function CreateArticlePage() {
         description: "Article created successfully",
       });
 
-
-      // Redirect to the created article
-      router.push(`/articles/${createdArticle.slug}`)
+      router.push("/")
       router.refresh()
-
     } catch (error) {
       console.error("Error creating article:", error);
       toast({
@@ -98,39 +91,9 @@ export default function CreateArticlePage() {
     }
   };
 
-  const handleSetupComplete = (
-    productName: string,
-    generatedSections: Block[][]
-  ) => {
-    setTitle(`${productName} Review: Is It Worth It?`);
-    setSections(generatedSections);
-    setShowSetupWizard(false);
-  };
-
-  const handleSkipWizard = () => {
-    // Create a basic structure for manual article creation
-    const basicSections: Block[][] = [
-      [
-        {
-          id: crypto.randomUUID(),
-          type: "heading",
-          level: 2,
-          content: "Introduction",
-          newBlock: { ingredients: 0, value: 0, manufacturer: 0, safety: 0 },
-          order: 0,
-          articleId: "",
-        },
-        {
-          id: crypto.randomUUID(),
-          type: "paragraph",
-          content: "",
-          newBlock: { ingredients: 0, value: 0, manufacturer: 0, safety: 0 },
-          order: 1,
-          articleId: "",
-        },
-      ],
-    ]
-    setSections(basicSections)
+  const handleSetupComplete = (productName: string, generatedSections: Block[][]) => {
+    setTitle(`${productName} Review: Is It Worth It?`)
+    setSections(generatedSections)
     setShowSetupWizard(false)
   }
 
@@ -157,10 +120,7 @@ export default function CreateArticlePage() {
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Create New Article</h1>
         <div className="flex space-x-2">
-
-          <Button onClick={() => setIsPreview(!isPreview)}>
-            {isPreview ? "Edit" : "Preview"}
-          </Button>
+          <Button onClick={() => setIsPreview(!isPreview)}>{isPreview ? "Edit" : "Preview"}</Button>
         </div>
       </div>
 
@@ -169,15 +129,7 @@ export default function CreateArticlePage() {
           <CardContent className="pt-6">
             {imageUrl && (
               <div className="aspect-video w-full overflow-hidden rounded-lg mb-6">
-                <Image
-                  src={imageUrl || "/placeholder.svg"}
-                  alt={title}
-
-                  width={800}
-                  height={400}
-
-                  className="w-full h-full object-cover"
-                />
+                <Image src={imageUrl || "/placeholder.svg"} alt={title} className="w-full h-full object-cover" />
               </div>
             )}
 
@@ -232,7 +184,7 @@ export default function CreateArticlePage() {
                     height={400}
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      e.currentTarget.src = "/abstract-geometric-placeholder.png";
+                      e.currentTarget.src = "/abstract-geometric-placeholder.png"
                     }}
                   />
                 </div>
@@ -240,9 +192,7 @@ export default function CreateArticlePage() {
             </div>
 
             <div className="bg-blue-50 p-4 rounded-md mb-4 text-sm">
-              <p className="font-medium text-blue-800">
-                Product Review Editor Tips:
-              </p>
+              <p className="font-medium text-blue-800">Product Review Editor Tips:</p>
               <ul className="list-disc pl-5 mt-2 text-blue-700 space-y-1">
                 <li>Drag and drop entire sections to reposition them</li>
                 <li>Use the copy button to duplicate sections</li>

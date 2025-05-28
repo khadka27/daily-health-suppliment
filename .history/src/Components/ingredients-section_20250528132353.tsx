@@ -1,10 +1,10 @@
 "use client"
-import { Label } from "@/Components/ui/label"
-import { Input } from "@/Components/ui/input"
-import { Textarea } from "@/Components/ui/textarea"
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Plus, Trash2 } from "lucide-react"
-import { ImageUploader } from "@/Components/image-uploader"
+import { ImageUploader } from "@/components/image-uploader"
 import Image from "next/image"
 
 interface Ingredient {

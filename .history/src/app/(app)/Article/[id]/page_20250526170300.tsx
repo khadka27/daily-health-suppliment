@@ -1,4 +1,4 @@
-import ArticleWrapper from "@/Components/ArticleWrapper";
+import ArticleWrapper from "@/components/ArticleWrapper";
 
 export default async function ArticlePage({
   params,
@@ -13,5 +13,10 @@ export default async function ArticlePage({
         </div>
       </main>
     </div>
+<<<<<<< HEAD
+  )
+}
+=======
   );
 }
+>>>>>>> 8df71d7009f28e459d30985dc6deb02e2a890a03

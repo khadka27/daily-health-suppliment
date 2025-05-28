@@ -1,7 +1,7 @@
 "use client";
 
+<<<<<<< HEAD
 import type React from "react"
-
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
@@ -10,11 +10,100 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { toast } from "@/Components/ui/use-toast"
+import { toast } from "@/hooks/use-toast"
 import { SectionEditor } from "@/Components/block-editor/section-editor"
 import { ArticleRenderer } from "@/Components/article-renderer"
-import type { Article, Block } from "@/types/article"
 import Image from "next/image"
+=======
+import type React from "react";
+
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { v4 as uuidv4 } from "uuid";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { toast } from "@/components/ui/use-toast";
+import { SectionEditor } from "@/components/block-editor/section-editor";
+import { ArticleRenderer } from "@/components/article-renderer";
+import type { Article, Block } from "@/types/article";
+import Image from "next/image";
+>>>>>>> 8df71d7009f28e459d30985dc6deb02e2a890a03
+
+// Updated Block and Article type definitions
+interface Block {
+  id: string
+  type:
+    | "paragraph"
+    | "heading"
+    | "image"
+    | "quote"
+    | "list"
+    | "code"
+    | "html"
+    | "divider"
+    | "cta"
+    | "productReview"
+    | "productRating"
+    | "prosCons"
+    | "ingredientsSection"
+  content: string
+  level?: 1 | 2 | 3
+  listType?: "ordered" | "unordered"
+  language?: string
+  imageUrl?: string
+  ctaText?: string
+  ctaLink?: string
+  productName?: string
+  overallRating?: number
+  ratings?: {
+    ingredients?: number
+    value?: number
+    manufacturer?: number
+    safety?: number
+    effectiveness?: number
+  }
+  highlights?: string[]
+  pros?: string[]
+  cons?: string[]
+  ingredients?: string[]
+  ingredientsList?: Array<{
+    id: string
+    number: number
+    name: string
+    imageUrl: string
+    description: string
+    studyYear: string
+    studySource: string
+    studyDescription: string
+  }>
+  ingredientsIntroduction?: string
+  howToUse?: string
+  price?: string
+  verdict?: string
+  ctaButtonText?: string
+  ctaButtonLink?: string
+  customFields?: Array<{ id: string; name: string; value: string }>
+  order?: number
+  articleId?: string
+}
+
+interface Article {
+  id: string
+  title: string
+  slug: string
+  author: string
+  imageUrl?: string
+  blocks: Block[]
+  cta?: {
+    text: string
+    link: string
+  }
+  createdAt: string
+  updatedAt: string
+}
 
 // Helper function to group blocks into sections
 const groupBlocksIntoSections = (blocks: Block[]): Block[][] => {
@@ -60,7 +149,12 @@ const groupBlocksIntoSections = (blocks: Block[]): Block[][] => {
   return sections;
 };
 
-export default function EditArticlePage({ params }: { params: { slug: string } }) {
+<<<<<<< HEAD
+interface PageProps {
+  params: Promise<{ slug: string }>
+}
+
+export default function EditArticlePage({ params }: PageProps) {
   const router = useRouter()
   const [isPreview, setIsPreview] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -70,13 +164,43 @@ export default function EditArticlePage({ params }: { params: { slug: string } }
   const [imageUrl, setImageUrl] = useState("")
   const [sections, setSections] = useState<Block[][]>([])
   const [originalSlug, setOriginalSlug] = useState("")
+  const [resolvedParams, setResolvedParams] = useState<{ slug: string } | null>(null)
+
+  // Resolve params first
+  useEffect(() => {
+    const resolveParams = async () => {
+      const resolved = await params
+      setResolvedParams(resolved)
+    }
+    resolveParams()
+  }, [params])
+=======
+export default function EditArticlePage({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const router = useRouter();
+  const [isPreview, setIsPreview] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [sections, setSections] = useState<Block[][]>([]);
+  const [originalSlug, setOriginalSlug] = useState("");
+>>>>>>> 8df71d7009f28e459d30985dc6deb02e2a890a03
 
   useEffect(() => {
     if (!resolvedParams) return
 
     const fetchArticle = async () => {
       try {
-        const response = await fetch(`/api/articles/${params.slug}`)
+<<<<<<< HEAD
+        const response = await fetch(`/api/articles/${resolvedParams.slug}`)
+=======
+        const response = await fetch(`/api/articles/${params.slug}`);
+>>>>>>> 8df71d7009f28e459d30985dc6deb02e2a890a03
 
         if (!response.ok) {
           throw new Error("Failed to fetch article");
@@ -117,8 +241,13 @@ export default function EditArticlePage({ params }: { params: { slug: string } }
       }
     };
 
+<<<<<<< HEAD
     fetchArticle()
-  }, [params.slug])
+  }, [resolvedParams])
+=======
+    fetchArticle();
+  }, [params.slug]);
+>>>>>>> 8df71d7009f28e459d30985dc6deb02e2a890a03
 
   // Flatten sections into blocks for saving and preview
   const flattenSections = (): Block[] => {
@@ -172,9 +301,15 @@ export default function EditArticlePage({ params }: { params: { slug: string } }
 
       // If the slug changed, redirect to the new URL
       if (newSlug !== originalSlug) {
-        router.push(`/articles/${newSlug}`)
+<<<<<<< HEAD
+        router.push(`/articles/edit/${newSlug}`)
       } else {
-        router.push(`/articles/${originalSlug}`)
+        router.push(`/articles/edit/${originalSlug}`)
+=======
+        router.push(`/articles/${newSlug}`);
+      } else {
+        router.push(`/articles/${originalSlug}`);
+>>>>>>> 8df71d7009f28e459d30985dc6deb02e2a890a03
       }
 
       router.refresh();
@@ -251,7 +386,16 @@ export default function EditArticlePage({ params }: { params: { slug: string } }
           <CardContent className="pt-6">
             {imageUrl && (
               <div className="aspect-video w-full overflow-hidden rounded-lg mb-6">
-                <Image src={imageUrl || "/placeholder.svg"} alt={title} className="w-full h-full object-cover" />
+                <Image
+                  src={imageUrl || "/placeholder.svg"}
+                  alt={title}
+<<<<<<< HEAD
+                  width={800}
+                  height={400}
+=======
+>>>>>>> 8df71d7009f28e459d30985dc6deb02e2a890a03
+                  className="w-full h-full object-cover"
+                />
               </div>
             )}
 
@@ -306,7 +450,12 @@ export default function EditArticlePage({ params }: { params: { slug: string } }
                     height={400}
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      e.currentTarget.src = "/abstract-geometric-placeholder.png"
+<<<<<<< HEAD
+                      e.currentTarget.src = "/placeholder.svg?height=400&width=800"
+=======
+                      e.currentTarget.src =
+                        "/abstract-geometric-placeholder.png";
+>>>>>>> 8df71d7009f28e459d30985dc6deb02e2a890a03
                     }}
                   />
                 </div>
