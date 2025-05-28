@@ -1,11 +1,10 @@
-
-import ReturnPolicy from '@/Components/ReturnPolicy'
-import React from 'react'
+import ReturnPolicy from "@/components/ReturnPolicy";
+import React from "react";
 
 export default function ReturnPolicyPage() {
   return (
     <div>
-      <ReturnPolicy/>
+      <ReturnPolicy />
     </div>
-  )
+  );
 }

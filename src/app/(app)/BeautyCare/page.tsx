@@ -1,11 +1,10 @@
-import BeautyCareListing from '@/Components/Beautycare'
-import React from 'react'
+import BeautyCareListing from "@/components/Beautycare";
+import React from "react";
 
-export default function  BeautyCare() {
+export default function BeautyCare() {
   return (
     <div>
-        <BeautyCareListing/>
-      
+      <BeautyCareListing />
     </div>
-  )
+  );
 }

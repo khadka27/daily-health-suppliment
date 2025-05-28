@@ -1,5 +1,5 @@
-import Nav from '@/Components/Nav'
-import React from 'react'
+import Nav from "@/components/Nav";
+import React from "react";
 
 export default function page() {
   return (
@@ -7,5 +7,5 @@ export default function page() {
       <h1> Hello </h1>
       <Nav />
     </div>
-  )
+  );
 }
