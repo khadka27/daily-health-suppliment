@@ -8,11 +8,11 @@ import Link from "next/link"
 import { Button } from "@/Components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { toast } from "@/components/ui/use-toast"
-import { SectionEditor } from "@/components/block-editor/section-editor"
-import { ArticleRenderer } from "@/components/article-renderer"
-import { ProductSetupWizard } from "@/components/product-setup-wizard"
+import { Label } from "@/Components/ui/label"
+import { toast } from "@/Components/ui/use-toast"
+import { SectionEditor } from "@/Components/block-editor/section-editor"
+import { ArticleRenderer } from "@/Components/article-renderer"
+import { ProductSetupWizard } from "@/Components/product-setup-wizard"
 import type { Article, Block } from "@/types/article"
 import Image from "next/image"
 
@@ -54,7 +54,7 @@ export default function CreateArticlePage() {
           .replace(/[^\w-]+/g, ""),
         blocks: flattenSections(),
         author,
-        publishDate: new Date(),
+        publishDate: new Date().toISOString(),
         imageUrl: imageUrl || undefined,
       }
 

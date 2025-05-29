@@ -54,7 +54,7 @@ export default function CreateArticlePage() {
           .replace(/[^\w-]+/g, ""),
         blocks: flattenSections(),
         author,
-        publishDate: new Date(),
+        publishDate: new Date().toISOString(),
         imageUrl: imageUrl || undefined,
       }
 
