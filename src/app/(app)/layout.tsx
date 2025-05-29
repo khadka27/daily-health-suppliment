@@ -3,7 +3,7 @@ import "../globals.css";
 import Navbar from "@/components/Nav";
 import Footer from "@/components/Footer";
 
-import ReduxProvider from "@/Components/providers/ReduxProvider";
+import ReduxProvider from "@/components/providers/ReduxProvider";
 
 
 export const metadata: Metadata = {
