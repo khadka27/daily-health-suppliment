@@ -17,8 +17,8 @@ async function getArticle(slug: string) {
   return res.json()
 }
 
-export default async function ArticlePage({ params }: { params: { slug: string } }) {
-  const article: Article | null = await getArticle(params.slug)
+export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
+  const article: Article | null = await getArticle((await params).slug)
 
   if (!article) {
     notFound()
@@ -33,7 +33,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
 
         <div className="flex gap-2">
           <Button variant="outline" asChild>
-            <Link href={`/edit/${params.slug}`}>Edit</Link>
+            <Link href={`/edit/${(await params).slug}`}>Edit</Link>
           </Button>
         </div>
       </div>
