@@ -35,9 +35,9 @@ export async function GET(request: Request, { params }: { params: Promise<{ slug
   }
 }
 
-export async function PUT(request: Request, { params }: { params: { slug: string } }) {
+export async function PUT(request: Request, { params }: { params: Promise<{ slug: string }> }) {
   try {
-    const slug = params.slug
+    const slug =(await params).slug
     const updatedArticle = await request.json()
 
     // Find the existing article
@@ -183,9 +183,9 @@ export async function PUT(request: Request, { params }: { params: { slug: string
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { slug: string } }) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ slug: string }> }) {
   try {
-    const slug = params.slug
+    const slug = (await params).slug
 
     const article = await prisma.article.findUnique({
       where: { slug },
