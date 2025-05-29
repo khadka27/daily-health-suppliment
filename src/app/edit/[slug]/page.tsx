@@ -1,6 +1,7 @@
 "use client"
 
 import type React from "react"
+import type { FormEvent } from "react"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
@@ -21,162 +22,113 @@ interface EditArticlePageProps {
 }
 
 export default function EditArticlePage({ params }: EditArticlePageProps) {
-  const router = useRouter()
-  const [isPreview, setIsPreview] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
-  const [title, setTitle] = useState("")
-  const [author, setAuthor] = useState("")
-  const [imageUrl, setImageUrl] = useState("")
-  const [blocks, setBlocks] = useState<Block[]>([])
-  const [originalSlug, setOriginalSlug] = useState("")
+  const router = useRouter();
+
+  const [isPreview, setIsPreview] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [blocks, setBlocks] = useState<Block[]>([]);
+  const [originalSlug, setOriginalSlug] = useState("");
+  const [id, setId] = useState("");
 
   useEffect(() => {
     const fetchArticle = async () => {
       try {
-        setIsLoading(true)
-        const response = await fetch(`/api/articles/${params.id}`)
+        setIsLoading(true);
+        const { id } = await params;
+        const res = await fetch(`/api/articles/${id}`);
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch article")
-        }
+        setId(id);
 
-        const article: Article = await response.json()
+        if (!res.ok) throw new Error("Failed to fetch article");
 
-        setTitle(article.title)
-        setAuthor(article.author)
-        setImageUrl(article.imageUrl || "")
-        setBlocks(article.blocks || [])
-        setOriginalSlug(article.slug)
+        const article: Article = await res.json();
+
+        setTitle(article.title);
+        setAuthor(article.author);
+        setImageUrl(article.imageUrl || "");
+        setBlocks(article.blocks || []);
+        setOriginalSlug(article.slug);
       } catch (error) {
-        console.error("Error fetching article:", error)
+        console.error(error);
         toast({
           title: "Error",
-          description: "Failed to fetch article. Please try again.",
+          description: "Failed to load article",
           variant: "destructive",
-        })
-        router.push("/")
+        });
+        router.push("/");
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
+    };
+
+    fetchArticle();
+  }, [params, router]);
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+
+    if (!title || !author || !blocks.length) {
+      toast({ title: "Validation Error", description: "Please complete all fields.", variant: "destructive" });
+      return;
     }
 
-    if (params.id) {
-      fetchArticle()
-    }
-  }, [params.id, router])
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-
-    if (!title || !author || blocks.length === 0) {
-      toast({
-        title: "Validation Error",
-        description: "Please fill in all required fields and add some content",
-        variant: "destructive",
-      })
-      return
-    }
+    setIsSubmitting(true);
 
     try {
-      setIsSubmitting(true)
+      const newSlug = title.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]+/g, "");
+      const { id } = await params;
 
-      const newSlug = title
-        .toLowerCase()
-        .replace(/\s+/g, "-")
-        .replace(/[^\w-]+/g, "")
-
-      const article = {
-        title,
-        slug: newSlug,
-        author,
-        imageUrl: imageUrl || null,
-        blocks: blocks.map((block, index) => ({
-          ...block,
-          order: index,
-        })),
-      }
-
-      const response = await fetch(`/api/articles/${params.id}`, {
+      const res = await fetch(`/api/articles/${id}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(article),
-      })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title,
+          slug: newSlug,
+          author,
+          imageUrl: imageUrl || null,
+          blocks: blocks.map((block, index) => ({ ...block, order: index })),
+        }),
+      });
 
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.message || "Failed to update article")
-      }
+      if (!res.ok) throw new Error((await res.json()).message || "Update failed");
 
-      const result = await response.json()
+      const updatedArticle: Article = await res.json();
 
-      toast({
-        title: "Success",
-        description: "Article updated successfully",
-      })
-
-      // Redirect to the updated article
-      router.push(`/articles/${result.slug}`)
-      router.refresh()
+      toast({ title: "Success", description: "Article updated successfully." });
+      router.push(`/articles/${updatedArticle.slug}`);
+      router.refresh();
     } catch (error) {
-      console.error("Error updating article:", error)
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to update article. Please try again.",
-        variant: "destructive",
-      })
+      console.error(error);
+      toast({ title: "Error", description: (error as Error).message, variant: "destructive" });
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const handleDelete = async () => {
-    if (!confirm("Are you sure you want to delete this article? This action cannot be undone.")) {
-      return
-    }
+    if (!confirm("Are you sure you want to delete this article?")) return;
 
     try {
-      const response = await fetch(`/api/articles/${params.id}`, {
-        method: "DELETE",
-      })
+      const { id } = await params;
+      const res = await fetch(`/api/articles/${id}`, { method: "DELETE" });
 
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.message || "Failed to delete article")
-      }
+      if (!res.ok) throw new Error((await res.json()).message || "Deletion failed");
 
-      toast({
-        title: "Success",
-        description: "Article deleted successfully",
-      })
-
-      router.push("/")
-      router.refresh()
+      toast({ title: "Success", description: "Article deleted successfully." });
+      router.push("/");
+      router.refresh();
     } catch (error) {
-      console.error("Error deleting article:", error)
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to delete article. Please try again.",
-        variant: "destructive",
-      })
+      console.error(error);
+      toast({ title: "Error", description: (error as Error).message, variant: "destructive" });
     }
-  }
+  };
 
   if (isLoading) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-pulse space-y-4 w-full max-w-2xl">
-            <div className="h-8 bg-gray-200 rounded w-1/2"></div>
-            <div className="h-4 bg-gray-200 rounded w-full"></div>
-            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-            <div className="h-32 bg-gray-200 rounded w-full"></div>
-          </div>
-        </div>
-      </div>
-    )
+    return <div className="container mx-auto p-4 text-center\">Loading...</div>;
   }
 
   return (
@@ -322,7 +274,7 @@ export default function EditArticlePage({ params }: EditArticlePageProps) {
                   <li>Product-specific blocks include ratings, pros/cons, and ingredient lists</li>
                 </ul>
               </div>
-              <BlockEditor blocks={blocks} onChange={setBlocks} articleId={params.id} />
+              <BlockEditor blocks={blocks} onChange={setBlocks} articleId={id} />
             </div>
           </div>
 
