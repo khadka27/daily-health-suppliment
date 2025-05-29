@@ -15,9 +15,9 @@ import Image from "next/image"
 import type { JSX } from "react"
 
 interface EditArticlePageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default function EditArticlePage({ params }: EditArticlePageProps) {
