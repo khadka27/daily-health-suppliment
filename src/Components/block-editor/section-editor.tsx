@@ -1,70 +1,16 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 
 import type React from "react"
+
 import { useState, useRef } from "react"
 import { v4 as uuidv4 } from "uuid"
 import { PlusCircle, Trash2, MoveUp, MoveDown, GripVertical, Copy } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/Components/ui/tooltip"
-import { toast } from "@/hooks/use-toast"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { toast } from "@/components/ui/use-toast"
+import type { Block } from "@/types/article"
 import { BlockEditor } from "./block-editor"
-
-interface Block {
-  id: string
-  type:
-    | "paragraph"
-    | "heading"
-    | "image"
-    | "quote"
-    | "list"
-    | "code"
-    | "html"
-    | "divider"
-    | "cta"
-    | "productReview"
-    | "productRating"
-    | "prosCons"
-    | "ingredientsSection"
-  content: string
-  level?: 1 | 2 | 3
-  listType?: "ordered" | "unordered"
-  language?: string
-  imageUrl?: string
-  ctaText?: string
-  ctaLink?: string
-  productName?: string
-  overallRating?: number
-  ratings?: {
-    ingredients?: number
-    value?: number
-    manufacturer?: number
-    safety?: number
-    effectiveness?: number
-  }
-  highlights?: string[]
-  pros?: string[]
-  cons?: string[]
-  ingredients?: string[]
-  ingredientsList?: Array<{
-    id: string
-    number: number
-    name: string
-    imageUrl: string
-    description: string
-    studyYear: string
-    studySource: string
-    studyDescription: string
-  }>
-  ingredientsIntroduction?: string
-  howToUse?: string
-  price?: string
-  verdict?: string
-  ctaButtonText?: string
-  ctaButtonLink?: string
-  customFields?: Array<{ id: string; name: string; value: string }>
-}
 
 interface SectionEditorProps {
   sections: Block[][]
@@ -205,6 +151,7 @@ export function SectionEditor({ sections, onChange }: SectionEditorProps) {
         {sections.map((section, index) => (
           <div
             key={index}
+            ref={(el) => (sectionRefs.current[index] = el)}
             className={`relative group ${dragOverIndex === index ? "border-t-4 border-blue-500" : ""}`}
             draggable
             onDragStart={(e) => handleDragStart(e, index)}

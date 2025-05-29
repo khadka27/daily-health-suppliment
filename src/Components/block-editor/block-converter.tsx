@@ -1,30 +1,25 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { ChevronDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { BlockTypeIndicator } from "./block-type-indicator";
-import type { Block } from "@/types/article";
+import { useState } from "react"
+import { ChevronDown } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { BlockTypeIndicator } from "./block-type-indicator"
+import type { Block } from "@/types/article"
 
 interface BlockConverterProps {
-  block: Block;
-  onConvert: (type: Block["type"]) => void;
+  block: Block
+  onConvert: (type: Block["type"]) => void
 }
 
 export function BlockConverter({ block, onConvert }: BlockConverterProps) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
 
   const handleConvert = (type: Block["type"]) => {
-    if (type === block.type) return;
-    onConvert(type);
-    setOpen(false);
-  };
+    if (type === block.type) return
+    onConvert(type)
+    setOpen(false)
+  }
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -63,31 +58,19 @@ export function BlockConverter({ block, onConvert }: BlockConverterProps) {
           <BlockTypeIndicator type="quote" />
           <span className="ml-2">Quote</span>
         </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => handleConvert("list")}
-          className={block.type === "list" ? "bg-gray-100" : ""}
-        >
+        <DropdownMenuItem onClick={() => handleConvert("list")} className={block.type === "list" ? "bg-gray-100" : ""}>
           <BlockTypeIndicator type="list" />
           <span className="ml-2">List</span>
         </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => handleConvert("code")}
-          className={block.type === "code" ? "bg-gray-100" : ""}
-        >
+        <DropdownMenuItem onClick={() => handleConvert("code")} className={block.type === "code" ? "bg-gray-100" : ""}>
           <BlockTypeIndicator type="code" />
           <span className="ml-2">Code</span>
         </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => handleConvert("html")}
-          className={block.type === "html" ? "bg-gray-100" : ""}
-        >
+        <DropdownMenuItem onClick={() => handleConvert("html")} className={block.type === "html" ? "bg-gray-100" : ""}>
           <BlockTypeIndicator type="html" />
           <span className="ml-2">HTML</span>
         </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => handleConvert("cta")}
-          className={block.type === "cta" ? "bg-gray-100" : ""}
-        >
+        <DropdownMenuItem onClick={() => handleConvert("cta")} className={block.type === "cta" ? "bg-gray-100" : ""}>
           <BlockTypeIndicator type="cta" />
           <span className="ml-2">Call to Action</span>
         </DropdownMenuItem>
@@ -114,5 +97,5 @@ export function BlockConverter({ block, onConvert }: BlockConverterProps) {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  );
+  )
 }
