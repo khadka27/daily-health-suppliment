@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { type NextRequest, NextResponse } from "next/server"
 import prisma from "@/lib/prisma"
 
@@ -6,238 +5,266 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
     const id = searchParams.get("id")
-    const category = searchParams.get("category")
-    const search = searchParams.get("sch")
-    const pageParam = searchParams.get("page")
-    const page = pageParam ? Number.parseInt(pageParam) : 1
-    const limit = 10
-    const skip = (page - 1) * limit
 
-    // If ID is provided, fetch a single article with all related data
-    if (id) {
-      const article = await prisma.article.findUnique({
-        where: { id },
-        include: {
-          blocks: {
-            include: {
-              ratings: true,
-              pros: true,
-              cons: true,
-              ingredients: true,
-              highlights: true,
-              customFields: true,
-              ingredientsList: true,
-            },
-            orderBy: {
-              order: "asc",
-            },
-          },
-        },
-      })
-
-      if (!article) {
-        return NextResponse.json({ success: false, message: "Article not found" }, { status: 404 })
-      }
-
-      // Transform the article data into a more usable format for the frontend
-      const transformedArticle = {
-        id: article.id,
-        title: article.title,
-        slug: article.slug,
-        author: article.author,
-        publishDate: article.publishDate,
-        imageUrl: article.imageUrl,
-        createdAt: article.createdAt,
-        updatedAt: article.updatedAt,
-        // Extract data from blocks based on their types
-        overview: article.blocks.find((block) => block.type === "overview")?.content || "",
-        description: article.blocks.find((block) => block.type === "description")?.content || "",
-        howToTake: article.blocks.find((block) => block.type === "howToTake")?.content || "",
-        safety: article.blocks.find((block) => block.type === "safety")?.content || "",
-        effectiveness: article.blocks.find((block) => block.type === "effectiveness")?.content || "",
-        howItWorks: article.blocks.find((block) => block.type === "howItWorks")?.content || "",
-        conclusion: article.blocks.find((block) => block.type === "conclusion")?.content || "",
-        officialWebsite: article.blocks.find((block) => block.type === "officialWebsite")?.ctaLink || "",
-
-        // Get ratings from the ratings block
-        overallRating: article.blocks.find((block) => block.ratings)?.ratings?.effectiveness || 0,
-        ingredientsRating: article.blocks.find((block) => block.ratings)?.ratings?.ingredients || 0,
-        valueRating: article.blocks.find((block) => block.ratings)?.ratings?.value || 0,
-        manufacturerRating: article.blocks.find((block) => block.ratings)?.ratings?.manufacturer || 0,
-        safetyRating: article.blocks.find((block) => block.ratings)?.ratings?.safety || 0,
-
-        // Get pros and cons safely with optional chaining and fallback
-        pros:
-          article.blocks
-            ?.filter((block) => block.pros && block.pros.length > 0)
-            ?.flatMap((block) => block.pros.map((pro) => pro.content)) || [],
-
-        cons:
-          article.blocks
-            ?.filter((block) => block.cons && block.cons.length > 0)
-            ?.flatMap((block) => block.cons.map((con) => con.content)) || [],
-
-        // Get brand highlights safely
-        brandHighlights:
-          article.blocks
-            ?.filter((block) => block.highlights && block.highlights.length > 0)
-            ?.flatMap((block) => block.highlights.map((highlight) => highlight.content)) || [],
-
-        // Get key ingredients safely
-        keyIngredients:
-          article.blocks
-            ?.filter((block) => block.ingredients && block.ingredients.length > 0)
-            ?.flatMap((block) => block.ingredients.map((ingredient) => ingredient.content)) || [],
-
-        // Get pricing information from custom fields safely
-        pricing: {
-          singleBottle:
-            article.blocks
-              ?.flatMap((block) => block.customFields || [])
-              ?.find((field) => field?.name === "singleBottlePrice")?.value || "",
-          threeBottles:
-            article.blocks
-              ?.flatMap((block) => block.customFields || [])
-              ?.find((field) => field?.name === "threeBottlesPrice")?.value || "",
-          sixBottles:
-            article.blocks
-              ?.flatMap((block) => block.customFields || [])
-              ?.find((field) => field?.name === "sixBottlesPrice")?.value || "",
-        },
-
-        // Get manufacturer info safely
-        manufacturerInfo: {
-          name:
-            article.blocks
-              ?.flatMap((block) => block.customFields || [])
-              ?.find((field) => field?.name === "manufacturerName")?.value || "",
-          location:
-            article.blocks
-              ?.flatMap((block) => block.customFields || [])
-              ?.find((field) => field?.name === "manufacturerLocation")?.value || "",
-          description:
-            article.blocks
-              ?.flatMap((block) => block.customFields || [])
-              ?.find((field) => field?.name === "manufacturerDescription")?.value || "",
-        },
-
-        // Get detailed ingredients list safely
-        ingredients:
-          article.blocks
-            ?.flatMap((block) => block.ingredientsList || [])
-            ?.map((ingredient) => ({
-              name: ingredient.name,
-              description: ingredient.description,
-              benefits: ingredient.studyDescription || "",
-            })) || [],
-
-        // Get FAQs from custom fields safely
-        faqs:
-          article.blocks
-            ?.filter((block) => block.type === "faq")
-            ?.map((block) => ({
-              question: block.customFields?.find((field) => field.name === "question")?.value || "",
-              answer: block.customFields?.find((field) => field.name === "answer")?.value || "",
-            })) || [],
-
-        // Get customer reviews from custom fields safely
-        customerReviews:
-          article.blocks
-            ?.filter((block) => block.type === "review")
-            ?.map((block) => ({
-              name: block.customFields?.find((field) => field.name === "reviewerName")?.value || "",
-              location: block.customFields?.find((field) => field.name === "reviewerLocation")?.value || "",
-              rating: Number(block.customFields?.find((field) => field.name === "rating")?.value || "0"),
-              review: block.content || "",
-            })) || [],
-      }
-
-      return NextResponse.json({ success: true, article: transformedArticle })
+    if (!id) {
+      return NextResponse.json({ success: false, message: "Article ID is required" }, { status: 400 })
     }
 
-    // Build the where clause for filtering articles
-    const where: any = {}
-    if (category) {
-      where.blocks = {
-        some: {
-          customFields: {
-            some: {
-              name: "category",
-              value: category,
-            },
-          },
-        },
-      }
-    }
-
-    if (search) {
-      where.OR = [
-        { title: { contains: search, mode: "insensitive" } },
-        { blocks: { some: { content: { contains: search, mode: "insensitive" } } } },
-      ]
-    }
-
-    // Count total articles matching the criteria
-    const total = await prisma.article.count({ where })
-    const totalPages = Math.ceil(total / limit)
-
-    // Fetch articles with pagination
-    const articles = await prisma.article.findMany({
-      where,
-      take: limit,
-      skip,
-      orderBy: { updatedAt: "desc" },
+    const article = await prisma.article.findUnique({
+      where: { id },
       include: {
         blocks: {
           include: {
+            pros: true,
+            cons: true,
+            ingredients: true,
+            highlights: true,
             customFields: true,
+            ingredientsList: true,
+            ratings: true,
           },
+          orderBy: { order: "asc" },
         },
       },
     })
 
-    // Transform the articles data for the listing
-    const transformedArticles = articles.map((article) => {
-      // Find the description block
-      const descriptionBlock = article.blocks.find((block) => block.type === "description")
+    if (!article) {
+      return NextResponse.json({ success: false, message: "Article not found" }, { status: 404 })
+    }
 
-      // Find the category from custom fields
-      const categoryField = article.blocks
-        ?.flatMap((block) => block.customFields)
-        ?.find((field) => field?.name === "category")
+    // Group blocks by type for easier processing
+    const blocksByType = {
+      paragraphs: article.blocks.filter((b) => b.type === "paragraph"),
+      headings: article.blocks.filter((b) => b.type === "heading"),
+      images: article.blocks.filter((b) => b.type === "image"),
+      ratings: article.blocks.filter((b) => b.type === "rating"),
+      prosCons: article.blocks.filter((b) => b.type === "pros-cons"),
+      ingredients: article.blocks.filter((b) => b.type === "ingredients"),
+      cta: article.blocks.filter((b) => b.type === "cta"),
+    }
 
-      return {
-        id: article.id,
-        title: article.title,
-        slug: article.slug,
-        category: categoryField?.value || "Uncategorized",
-        categorySlug: categoryField?.value?.toLowerCase().replace(/\s+/g, "-") || "uncategorized",
-        description: descriptionBlock?.content || "",
-        image: article.imageUrl || "",
-        createdAt: article.createdAt,
-        updatedAt: article.updatedAt,
+    // Extract ratings from rating blocks
+    const ratingBlock = blocksByType.ratings[0] // Use the first rating block if available
+    const ratings = {
+      overall: ratingBlock?.overallRating || 0,
+      ingredients: ratingBlock?.ratings?.ingredients || 0,
+      value: ratingBlock?.ratings?.value || 0,
+      manufacturer: ratingBlock?.ratings?.manufacturer || 0,
+      safety: ratingBlock?.ratings?.safety || 0,
+      effectiveness: ratingBlock?.ratings?.effectiveness || 0,
+    }
+
+    // Extract pros and cons
+    const pros = blocksByType.prosCons.flatMap((b) => b.pros.map((p) => p.content))
+    const cons = blocksByType.prosCons.flatMap((b) => b.cons.map((c) => c.content))
+
+    // Extract key ingredients
+    const keyIngredients = blocksByType.prosCons.flatMap((b) => b.ingredients.map((i) => i.content))
+
+    // Extract brand highlights
+    const brandHighlights = blocksByType.ratings.flatMap((b) => b.highlights.map((h) => h.content))
+
+    // Extract detailed ingredients
+    const detailedIngredients = blocksByType.ingredients.flatMap((b) =>
+      b.ingredientsList.map((i) => ({
+        name: i.name,
+        description: i.description,
+        benefits: i.studyDescription || "",
+        imageUrl: i.imageUrl,
+        studyYear: i.studyYear,
+        studySource: i.studySource,
+      })),
+    )
+
+    // Extract custom fields for additional data
+    const getCustomFieldValue = (name: string) => {
+      for (const block of article.blocks) {
+        const field = block.customFields.find((cf) => cf.name === name)
+        if (field) return field.value
+      }
+      return ""
+    }
+
+    // Extract FAQs from custom fields
+    const faqs = []
+    for (let i = 1; i <= 10; i++) {
+      // Assume max 10 FAQs
+      const question = getCustomFieldValue(`faq_question_${i}`)
+      const answer = getCustomFieldValue(`faq_answer_${i}`)
+      if (question && answer) {
+        faqs.push({ question, answer })
+      }
+    }
+
+    // Extract customer reviews from custom fields
+    const customerReviews = []
+    for (let i = 1; i <= 5; i++) {
+      // Assume max 5 reviews
+      const name = getCustomFieldValue(`review_name_${i}`)
+      const location = getCustomFieldValue(`review_location_${i}`)
+      const rating = getCustomFieldValue(`review_rating_${i}`)
+      const review = getCustomFieldValue(`review_text_${i}`)
+
+      if (name && review) {
+        customerReviews.push({
+          name,
+          location,
+          rating: rating ? Number.parseFloat(rating) : 0,
+          review,
+        })
+      }
+    }
+
+    // Create a structured content array with all blocks in order
+    const structuredContent = article.blocks.map((block) => {
+      const baseBlock = {
+        id: block.id,
+        type: block.type,
+        order: block.order,
+      }
+
+      switch (block.type) {
+        case "heading":
+          return {
+            ...baseBlock,
+            level: block.level || 2,
+            content: block.content || "",
+          }
+        case "paragraph":
+          return {
+            ...baseBlock,
+            content: block.content || "",
+            section: block.customFields.find((cf) => cf.name === "section")?.value || "general",
+          }
+        case "image":
+          return {
+            ...baseBlock,
+            imageUrl: block.imageUrl || "",
+            caption: block.content || "",
+          }
+        case "rating":
+          return {
+            ...baseBlock,
+            productName: block.productName || "",
+            ratings: block.ratings || {},
+            highlights: block.highlights || [],
+          }
+        case "pros-cons":
+          return {
+            ...baseBlock,
+            pros: block.pros || [],
+            cons: block.cons || [],
+            ingredients: block.ingredients || [],
+          }
+        case "ingredients":
+          return {
+            ...baseBlock,
+            productName: block.productName || "",
+            introduction: block.ingredientsIntroduction || "",
+            ingredientsList: block.ingredientsList || [],
+          }
+        case "cta":
+          return {
+            ...baseBlock,
+            text: block.ctaText || "",
+            buttonText: block.ctaButtonText || "",
+            buttonLink: block.ctaButtonLink || "",
+            backgroundColor: block.backgroundColor || "",
+          }
+        default:
+          return {
+            ...baseBlock,
+            content: block.content || "",
+          }
       }
     })
 
-    return NextResponse.json({
-      success: true,
-      articles: transformedArticles,
-      pagination: {
-        total,
-        page,
-        limit,
-        totalPages,
+    // Transform the article data to match the expected format in ArticleWrapper
+    const transformedArticle = {
+      id: article.id,
+      title: article.title,
+      slug: article.slug,
+      author: article.author,
+      publishDate: article.publishDate.toISOString(),
+      imageUrl: article.imageUrl || "",
+      createdAt: article.createdAt.toISOString(),
+      updatedAt: article.updatedAt.toISOString(),
+
+      // Extract content sections
+      overview:
+        blocksByType.paragraphs.find((b) =>
+          b.customFields.some((cf) => cf.name === "section" && cf.value === "overview"),
+        )?.content || "",
+
+      description:
+        blocksByType.paragraphs.find((b) =>
+          b.customFields.some((cf) => cf.name === "section" && cf.value === "description"),
+        )?.content || "",
+
+      howToTake:
+        blocksByType.paragraphs.find((b) =>
+          b.customFields.some((cf) => cf.name === "section" && cf.value === "howToTake"),
+        )?.content || "",
+
+      safety:
+        blocksByType.paragraphs.find((b) => b.customFields.some((cf) => cf.name === "section" && cf.value === "safety"))
+          ?.content || "",
+
+      effectiveness:
+        blocksByType.paragraphs.find((b) =>
+          b.customFields.some((cf) => cf.name === "section" && cf.value === "effectiveness"),
+        )?.content || "",
+
+      howItWorks:
+        blocksByType.paragraphs.find((b) =>
+          b.customFields.some((cf) => cf.name === "section" && cf.value === "howItWorks"),
+        )?.content || "",
+
+      conclusion:
+        blocksByType.paragraphs.find((b) =>
+          b.customFields.some((cf) => cf.name === "section" && cf.value === "conclusion"),
+        )?.content || "",
+
+      // Ratings
+      overallRating: ratings.overall,
+      ingredientsRating: ratings.ingredients,
+      valueRating: ratings.value,
+      manufacturerRating: ratings.manufacturer,
+      safetyRating: ratings.safety,
+
+      // Lists
+      pros,
+      cons,
+      brandHighlights,
+      keyIngredients,
+
+      // Structured data
+      officialWebsite: getCustomFieldValue("officialWebsite"),
+
+      pricing: {
+        singleBottle: getCustomFieldValue("priceSingleBottle"),
+        threeBottles: getCustomFieldValue("priceThreeBottles"),
+        sixBottles: getCustomFieldValue("priceSixBottles"),
       },
-    })
+
+      manufacturerInfo: {
+        name: getCustomFieldValue("manufacturerName"),
+        location: getCustomFieldValue("manufacturerLocation"),
+        description: getCustomFieldValue("manufacturerDescription"),
+      },
+
+      // Detailed data
+      ingredients: detailedIngredients,
+      faqs,
+      customerReviews,
+
+      // Add the structured content for flexible rendering
+      structuredContent,
+    }
+
+    return NextResponse.json({ success: true, article: transformedArticle })
   } catch (error) {
-    console.error("Error fetching articles:", error)
-    return NextResponse.json(
-      {
-        success: false,
-        message: "Failed to fetch articles",
-        error: error instanceof Error ? error.message : String(error),
-      },
-      { status: 500 },
-    )
+    console.error("Error fetching article:", error)
+    return NextResponse.json({ success: false, message: "Failed to fetch article" }, { status: 500 })
   }
 }

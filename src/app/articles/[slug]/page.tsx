@@ -1,8 +1,9 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { Button } from "@/Components/ui/button"
-import { ArticleRenderer } from "@/Components/article-renderer"
+import { Button } from "@/components/ui/button"
+import { ArticleRenderer } from "@/components/article-renderer"
 import type { Article } from "@/types/article"
+import Image from "next/image"
 
 async function getArticle(slug: string) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || ""}/api/articles/${slug}`, {
@@ -39,7 +40,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
 
       {article.imageUrl && (
         <div className="aspect-video w-full overflow-hidden rounded-lg mb-8">
-          <img
+          <Image
             src={article.imageUrl || "/placeholder.svg"}
             alt={article.title}
             className="w-full h-full object-cover"

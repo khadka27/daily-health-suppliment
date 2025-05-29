@@ -4,7 +4,7 @@ import type React from "react"
 
 import { useState, useRef } from "react"
 import { Upload, X } from "lucide-react"
-import { Button } from "@/Components/ui/button"
+import { Button } from "@/components/ui/button"
 import Image from "next/image"
 
 interface ImageUploaderProps {

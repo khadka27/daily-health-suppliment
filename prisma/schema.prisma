@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,59 +10,59 @@ datasource db {
 model Article {
   id          String   @id @default(cuid())
   title       String
-  slug        String   @unique
-  author      String
-  publishDate DateTime @default(now())
-  imageUrl    String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  author      String
+  imageUrl    String?
+  publishDate DateTime @default(now())
+  slug        String   @unique
   blocks      Block[]
 }
 
 model Block {
-  id                    String           @id @default(cuid())
-  type                  String
-  content               String?
-  level                 Int?
-  listType              String?
-  imageUrl              String?
-  language              String?
-  ctaText               String?
-  ctaLink               String?
-  productName           String?
-  overallRating         Float?
+  id                      String           @id @default(cuid())
+  type                    String
+  content                 String?
+  level                   Int?
+  listType                String?
+  imageUrl                String?
+  language                String?
+  ctaText                 String?
+  ctaLink                 String?
+  productName             String?
+  overallRating           Float?
   ingredientsIntroduction String?
-  howToUse              String?
-  price                 String?
-  verdict               String?
-  author                String?
-  reviewDate            String?
-  medicallyReviewed     Boolean?
-  factChecked           Boolean?
-  ctaButtonText         String?
-  ctaButtonLink         String?
-  backgroundColor       String?
-  order                 Int
-  articleId             String
-  article               Article          @relation(fields: [articleId], references: [id], onDelete: Cascade)
-  ratings               Rating?
-  pros                  Pros[]
-  cons                  Cons[]
-  ingredients           Ingredient[]
-  highlights            Highlight[]
-  customFields          CustomField[]
-  ingredientsList       IngredientItem[]
+  howToUse                String?
+  price                   String?
+  verdict                 String?
+  author                  String?
+  reviewDate              String?
+  medicallyReviewed       Boolean?
+  factChecked             Boolean?
+  ctaButtonText           String?
+  ctaButtonLink           String?
+  backgroundColor         String?
+  order                   Int
+  articleId               String
+  article                 Article          @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  cons                    Cons[]
+  customFields            CustomField[]
+  highlights              Highlight[]
+  ingredients             Ingredient[]
+  ingredientsList         IngredientItem[]
+  pros                    Pros[]
+  ratings                 Rating?
 }
 
 model Rating {
-  id             String  @id @default(cuid())
-  ingredients    Float?
-  value          Float?
-  manufacturer   Float?
-  safety         Float?
-  effectiveness  Float?
-  blockId        String  @unique
-  block          Block   @relation(fields: [blockId], references: [id], onDelete: Cascade)
+  id            String @id @default(cuid())
+  ingredients   Float?
+  value         Float?
+  manufacturer  Float?
+  safety        Float?
+  effectiveness Float?
+  blockId       String @unique
+  block         Block  @relation(fields: [blockId], references: [id], onDelete: Cascade)
 }
 
 model Pros {

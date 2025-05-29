@@ -1,6 +1,6 @@
 "use client"
 
-import { Button } from "@/Components/ui/button"
+import { Button } from "@/components/ui/button"
 import { FlaskRoundIcon as Flask, DollarSign, Shield, Beaker } from "lucide-react"
 import Image from "next/image"
 

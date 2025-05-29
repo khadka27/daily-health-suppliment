@@ -1,18 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
-
-import type React from "react"
 import { useState, useRef, useEffect } from "react"
 import { v4 as uuidv4 } from "uuid"
 import {
   PlusCircle,
   ImageIcon,
   Trash2,
-  MoveUp,
-  MoveDown,
   Sparkles,
-  GripVertical,
   ExternalLink,
   Star,
   Plus,
@@ -29,6 +24,7 @@ import { toast } from "@/hooks/use-toast"
 import type { Block } from "@/types/article"
 import { Label } from "@/components/ui/label"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import Image from "next/image"
 
 interface BlockEditorProps {
   blocks: Block[]
@@ -39,10 +35,7 @@ interface BlockEditorProps {
 export function BlockEditor({ blocks, onChange, articleId = "" }: BlockEditorProps) {
   const [activeBlock, setActiveBlock] = useState<string | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
-  const [draggedBlock, setDraggedBlock] = useState<string | null>(null)
-  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
   const [hoverIndex, setHoverIndex] = useState<number | null>(null)
-  const [showDragHandleMenu, setShowDragHandleMenu] = useState<string | null>(null)
   const [activeSection, setActiveSection] = useState<string>("")
   const blockRefs = useRef<{ [key: string]: HTMLDivElement | null }>({})
 
@@ -299,82 +292,6 @@ export function BlockEditor({ blocks, onChange, articleId = "" }: BlockEditorPro
     }, 100)
   }
 
-  const moveBlock = (id: string, direction: "up" | "down") => {
-    const index = blocks.findIndex((block) => block.id === id)
-    if ((direction === "up" && index === 0) || (direction === "down" && index === blocks.length - 1)) {
-      return
-    }
-
-    const newBlocks = [...blocks]
-    const newIndex = direction === "up" ? index - 1 : index + 1
-    const [movedBlock] = newBlocks.splice(index, 1)
-    newBlocks.splice(newIndex, 0, movedBlock)
-    // Update order for all blocks
-    newBlocks.forEach((block, idx) => {
-      block.order = idx
-    })
-    onChange(newBlocks)
-  }
-
-  const moveBlockToPosition = (fromIndex: number, toIndex: number) => {
-    if (fromIndex === toIndex) return
-
-    const newBlocks = [...blocks]
-    const [movedBlock] = newBlocks.splice(fromIndex, 1)
-    newBlocks.splice(toIndex, 0, movedBlock)
-    // Update order for all blocks
-    newBlocks.forEach((block, idx) => {
-      block.order = idx
-    })
-    onChange(newBlocks)
-  }
-
-  const handleDragStart = (e: React.DragEvent, id: string) => {
-    e.dataTransfer.setData("text/plain", id)
-    e.dataTransfer.effectAllowed = "move"
-    setDraggedBlock(id)
-
-    // Add a delay to set a visual cue for the dragged element
-    setTimeout(() => {
-      if (blockRefs.current[id]) {
-        blockRefs.current[id]?.classList.add("opacity-50")
-      }
-    }, 0)
-  }
-
-  const handleDragEnd = () => {
-    // Remove visual cues
-    if (draggedBlock && blockRefs.current[draggedBlock]) {
-      blockRefs.current[draggedBlock]?.classList.remove("opacity-50")
-    }
-
-    setDraggedBlock(null)
-    setDragOverIndex(null)
-  }
-
-  const handleDragOver = (e: React.DragEvent, index: number) => {
-    e.preventDefault()
-    e.dataTransfer.dropEffect = "move"
-
-    if (dragOverIndex !== index) {
-      setDragOverIndex(index)
-    }
-  }
-
-  const handleDrop = (e: React.DragEvent, toIndex: number) => {
-    e.preventDefault()
-
-    const id = e.dataTransfer.getData("text/plain")
-    const fromIndex = blocks.findIndex((block) => block.id === id)
-
-    if (fromIndex !== -1) {
-      moveBlockToPosition(fromIndex, toIndex)
-    }
-
-    setDraggedBlock(null)
-    setDragOverIndex(null)
-  }
-
   const generateAIContent = async (blockId: string, prompt = "") => {
     const block = blocks.find((b) => b.id === blockId)
     if (!block) return
@@ -483,32 +400,6 @@ export function BlockEditor({ blocks, onChange, articleId = "" }: BlockEditorPro
     }
   }, [activeBlock])
 
-  // Helper function to render star rating
-  const renderStars = (rating: number) => {
-    const fullStars = Math.floor(rating)
-    const hasHalfStar = rating % 1 >= 0.5
-    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0)
-
-    return (
-      <div className="flex">
-        {[...Array(fullStars)].map((_, i) => (
-          <Star key={`full-${i}`} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-        ))}
-        {hasHalfStar && (
-          <div className="relative">
-            <Star className="w-4 h-4 text-yellow-400" />
-            <div className="absolute top-0 left-0 w-1/2 overflow-hidden">
-              <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-            </div>
-          </div>
-        )}
-        {[...Array(emptyStars)].map((_, i) => (
-          <Star key={`empty-${i}`} className="w-4 h-4 text-gray-300" />
-        ))}
-      </div>
-    )
-  }
-
   return (
     <TooltipProvider>
       <div className="space-y-1">
@@ -606,25 +497,14 @@ export function BlockEditor({ blocks, onChange, articleId = "" }: BlockEditorPro
                   blockRefs.current[block.id] = el
                 }
               }}
-              className={`relative ${activeBlock === block.id ? "ring-2 ring-blue-500 rounded-md" : ""} 
-                       ${dragOverIndex === index ? "border-t-4 border-blue-500" : ""}`}
+              className={`relative ${activeBlock === block.id ? "ring-2 ring-blue-500 rounded-md" : ""}`}
               onClick={() => setActiveBlock(block.id)}
-              draggable={true}
-              onDragStart={(e) => handleDragStart(e, block.id)}
-              onDragEnd={handleDragEnd}
-              onDragOver={(e) => handleDragOver(e, index)}
-              onDrop={(e) => handleDrop(e, index)}
               tabIndex={0}
               id={block.id}
             >
               <div className="border border-gray-200 hover:border-gray-300 transition-colors mb-2 rounded-md">
                 <div className="p-4">
-                  {/* Drag handle */}
-                  <div className="absolute left-0 top-0 bottom-0 w-8 flex flex-col items-center justify-center cursor-move opacity-0 group-hover:opacity-100 transition-opacity">
-                    <GripVertical className="h-5 w-5 text-gray-400" />
-                  </div>
-
-                  <div className="ml-6">
+                  <div className="space-y-4">
                     {/* Block content based on type */}
                     {block.type === "paragraph" && (
                       <Textarea
@@ -671,7 +551,7 @@ export function BlockEditor({ blocks, onChange, articleId = "" }: BlockEditorPro
                         />
                         {block.imageUrl && (
                           <div className="mt-2">
-                            <img
+                            <Image
                               src={block.imageUrl || "/placeholder.svg"}
                               alt={block.content || "Image"}
                               className="max-w-full h-auto rounded-md"
@@ -781,7 +661,7 @@ export function BlockEditor({ blocks, onChange, articleId = "" }: BlockEditorPro
                         <div className="space-y-2">
                           <Label>Brand Highlights</Label>
                           <div className="space-y-2">
-                            {block.highlights.map((highlight, idx) => (
+                            {block.highlights.map((highlight) => (
                               <div key={highlight.id} className="flex gap-2">
                                 <Input
                                   value={highlight.content}
@@ -943,7 +823,7 @@ export function BlockEditor({ blocks, onChange, articleId = "" }: BlockEditorPro
 
                         <div className="space-y-4">
                           <Label>Ingredients List</Label>
-                          {block.ingredientsList.map((ingredient, idx) => (
+                          {block.ingredientsList.map((ingredient) => (
                             <div key={ingredient.id} className="border rounded-md p-4 space-y-2">
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                                 <Input
@@ -1068,22 +948,21 @@ export function BlockEditor({ blocks, onChange, articleId = "" }: BlockEditorPro
                 </div>
               </div>
 
-              {/* Block controls */}
-              <div className="absolute -left-12 top-1/2 transform -translate-y-1/2 flex flex-col space-y-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              {/* Block controls - only delete and AI generation */}
+              <div className="absolute -right-12 top-1/2 transform -translate-y-1/2 flex flex-col space-y-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
                       variant="outline"
                       size="icon"
                       className="h-8 w-8 rounded-full bg-white"
-                      onClick={() => moveBlock(block.id, "up")}
-                      disabled={index === 0}
+                      onClick={() => deleteBlock(block.id)}
                     >
-                      <MoveUp className="h-4 w-4" />
+                      <Trash2 className="h-4 w-4" />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent side="left">
-                    <p>Move up</p>
+                    <p>Delete block</p>
                   </TooltipContent>
                 </Tooltip>
 
@@ -1093,37 +972,17 @@ export function BlockEditor({ blocks, onChange, articleId = "" }: BlockEditorPro
                       variant="outline"
                       size="icon"
                       className="h-8 w-8 rounded-full bg-white"
-                      onClick={() => moveBlock(block.id, "down")}
-                      disabled={index === blocks.length - 1}
+                      onClick={() => generateAIContent(block.id)}
+                      disabled={isGenerating}
                     >
-                      <MoveDown className="h-4 w-4" />
+                      <Sparkles className="h-4 w-4" />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent side="left">
-                    <p>Move down</p>
+                    <p>Generate AI content</p>
                   </TooltipContent>
                 </Tooltip>
-
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-8 w-8 rounded-full bg-white"
-                  onClick={() => deleteBlock(block.id)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
               </div>
-
-              {/* AI generation button */}
-              <Button
-                variant="outline"
-                size="icon"
-                className="absolute -right-12 top-1/2 transform -translate-y-1/2 h-8 w-8 rounded-full bg-white opacity-0 group-hover:opacity-100 transition-opacity"
-                onClick={() => generateAIContent(block.id)}
-                disabled={isGenerating}
-              >
-                <Sparkles className="h-4 w-4" />
-              </Button>
             </div>
           </div>
         ))}

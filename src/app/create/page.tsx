@@ -5,7 +5,7 @@ import type React from "react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { Button } from "@/Components/ui/button"
+import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -67,21 +67,24 @@ export default function CreateArticlePage() {
       })
 
       if (!response.ok) {
-        throw new Error("Failed to create article")
+        const errorData = await response.json()
+        throw new Error(errorData.error || "Failed to create article")
       }
+
+      const createdArticle = await response.json()
 
       toast({
         title: "Success",
         description: "Article created successfully",
       })
 
-      router.push("/")
+      router.push(`/Article/${createdArticle.slug}`)
       router.refresh()
     } catch (error) {
       console.error("Error creating article:", error)
       toast({
         title: "Error",
-        description: "Failed to create article. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to create article. Please try again.",
         variant: "destructive",
       })
     } finally {
@@ -108,7 +111,7 @@ export default function CreateArticlePage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-20 py-20">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Create Product Review</h1>
         <div className="flex space-x-2">
@@ -121,7 +124,13 @@ export default function CreateArticlePage() {
           <CardContent className="pt-6">
             {imageUrl && (
               <div className="aspect-video w-full overflow-hidden rounded-lg mb-6">
-                <Image src={imageUrl || "/placeholder.svg"} alt={title} className="w-full h-full object-cover" />
+                <Image
+                  src={imageUrl || "/placeholder.svg"}
+                  alt={title}
+                  width={1280}
+                  height={720}
+                  className="w-full h-full object-cover"
+                />
               </div>
             )}
 
@@ -172,9 +181,11 @@ export default function CreateArticlePage() {
                   <Image
                     src={imageUrl || "/placeholder.svg"}
                     alt="Featured image"
+                    width={1280}
+                    height={720}
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      e.currentTarget.src = "/abstract-geometric-placeholder.png"
+                      e.currentTarget.src = "/placeholder.svg?height=720&width=1280"
                     }}
                   />
                 </div>

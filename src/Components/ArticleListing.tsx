@@ -56,7 +56,7 @@ export default function ArticleListing() {
         if (page) queryParams.append("page", page.toString());
 
         // Fetch articles from API
-        const response = await fetch(`/api/article?${queryParams.toString()}`);
+        const response = await fetch(`/api/articles?${queryParams.toString()}`);
         console.log("API URL:", response);
 
         

@@ -1,5 +1,5 @@
 
-import ArticleListing from '@/Components/ArticleListing'
+import ArticleListing from '@/components/ArticleListing'
 import React,{Suspense} from 'react'
 
 export default function ArticleListingPage() {
