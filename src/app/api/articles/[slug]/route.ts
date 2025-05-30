@@ -59,7 +59,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ slug
       where: { id: existingArticle.id },
       data: {
         title: updatedArticle.title,
-        author: updatedArticle.author,
+        user: updatedArticle.user,
         imageUrl: updatedArticle.imageUrl || null,
         slug: updatedArticle.slug || slug,
         blocks: {
