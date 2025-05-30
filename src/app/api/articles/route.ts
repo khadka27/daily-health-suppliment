@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
       },
     })
 
-    const transformedArticles = articles.map((article) => ({
+    const transformedArticles = articles.map((article: { id: { toString: () => any }; title: any; slug: any; user: any; publishDate: any; imageUrl: any; blocks: any[]; category: any; createdAt: any; updatedAt: any }) => ({
       id: article.id.toString(),
       title: article.title,
       slug: article.slug,

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from "next/server"
 import prisma from "@/lib/prisma"
 
@@ -22,10 +23,10 @@ export async function GET() {
     })
 
     // Organize categories into a hierarchical structure
-    const mainCategories = categories.filter((cat) => !cat.parentId)
-    const organizedCategories = mainCategories.map((mainCat) => ({
+    const mainCategories = categories.filter((cat: { parentId: any }) => !cat.parentId)
+    const organizedCategories = mainCategories.map((mainCat: { id: any }) => ({
       ...mainCat,
-      children: categories.filter((cat) => cat.parentId === mainCat.id),
+      children: categories.filter((cat: { parentId: any }) => cat.parentId === mainCat.id),
     }))
 
     return NextResponse.json({
