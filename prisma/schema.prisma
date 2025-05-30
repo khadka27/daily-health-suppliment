@@ -7,13 +7,29 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  role      UserRole @default(EDITOR)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  articles  Article[]
+}
+
+enum UserRole {
+  ADMINISTRATOR
+  EDITOR
+}
 
 model Article {
   id          String   @id @default(cuid())
   title       String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  author      String
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
   imageUrl    String?
   publishDate DateTime @default(now())
   slug        String   @unique
@@ -21,6 +37,7 @@ model Article {
   category    Category? @relation(fields: [categoryId], references: [id])
   blocks      Block[]
 }
+
 
 model Category {
   id          String     @id @default(cuid())

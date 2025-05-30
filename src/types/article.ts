@@ -1,3 +1,16 @@
+export interface User {
+  id: string
+  email: string
+  name: string
+  role: "ADMINISTRATOR" | "EDITOR"
+  isActive: boolean
+  createdAt: Date
+  updatedAt: Date
+  _count?: {
+    articles: number
+  }
+}
+
 export interface Category {
   id: string
   name: string
@@ -20,7 +33,8 @@ export interface Article {
   title: string
   createdAt: Date
   updatedAt: Date
-  author: string
+  userId: string
+  user?: User
   imageUrl?: string
   publishDate: Date
   slug: string

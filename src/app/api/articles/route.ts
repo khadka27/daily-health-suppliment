@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
-import { NextRequest, NextResponse } from "next/server"
+import { type NextRequest, NextResponse } from "next/server"
 import prisma from "@/lib/prisma"
 
 export async function GET(request: NextRequest) {
@@ -10,6 +9,7 @@ export async function GET(request: NextRequest) {
     const page = pageParam ? Number.parseInt(pageParam, 10) : 1
     const category = searchParams.get("category")
     const search = searchParams.get("search")
+    const userId = searchParams.get("userId")
 
     const limit = 10
     const skip = (page - 1) * limit
@@ -17,13 +17,11 @@ export async function GET(request: NextRequest) {
     const where: any = {}
 
     if (category) {
-      where.blocks = {
-        some: {
-          customFields: {
-            some: { name: "category", value: category },
-          },
-        },
-      }
+      where.categoryId = category
+    }
+
+    if (userId) {
+      where.userId = userId
     }
 
     if (search) {
@@ -42,6 +40,21 @@ export async function GET(request: NextRequest) {
       skip,
       orderBy: { updatedAt: "desc" },
       include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+          },
+        },
+        category: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
         blocks: {
           include: {
             pros: true,
@@ -61,12 +74,11 @@ export async function GET(request: NextRequest) {
       id: article.id.toString(),
       title: article.title,
       slug: article.slug,
-      author: article.author,
+      user: article.user,
       publishDate: article.publishDate,
       imageUrl: article.imageUrl,
       description: article.blocks.find((block) => block.type === "paragraph")?.content || "",
-      category: "Review", // Default category
-      categorySlug: "review",
+      category: article.category,
       createdAt: article.createdAt,
       updatedAt: article.updatedAt,
       blocks: article.blocks,
@@ -85,128 +97,131 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: Request) {
   try {
-    const article = await request.json()
+    const data = await request.json()
 
     // Validate required fields
-    if (!article.title || !article.author || !article.blocks) {
-      return NextResponse.json({ error: "Title, author, and blocks are required" }, { status: 400 })
+    if (!data.title || !data.userId || !data.blocks || !Array.isArray(data.blocks)) {
+      return NextResponse.json(
+        { success: false, message: "Missing required fields: title, userId, and blocks are required" },
+        { status: 400 },
+      )
     }
 
-    // Ensure slug is set
-    if (!article.slug) {
-      article.slug = article.title
+    // Check if user exists
+    const user = await prisma.user.findUnique({
+      where: { id: data.userId },
+    })
+
+    if (!user) {
+      return NextResponse.json({ success: false, message: "User not found" }, { status: 400 })
+    }
+
+    // Generate slug if not provided
+    const slug =
+      data.slug ||
+      data.title
         .toLowerCase()
         .replace(/\s+/g, "-")
         .replace(/[^\w-]+/g, "")
-    }
 
-    // Create the article with all its related data
-    const createdArticle = await prisma.article.create({
+    // Create the article with nested blocks
+    const article = await prisma.article.create({
       data: {
-        title: article.title,
-        author: article.author,
-        slug: article.slug,
-        imageUrl: article.imageUrl || null,
-        publishDate: article.publishDate ? new Date(article.publishDate) : new Date(),
+        title: data.title,
+        slug: slug,
+        userId: data.userId,
+        publishDate: data.publishDate ? new Date(data.publishDate) : new Date(),
+        imageUrl: data.imageUrl || null,
+        categoryId: data.categoryId || null,
         blocks: {
-          create: article.blocks.map((block: any, index: number) => ({
+          create: data.blocks.map((block: any, idx: number) => ({
             type: block.type,
-            content: block.content || null,
+            content: block.content || "",
+            order: idx,
             level: block.level || null,
-            listType: block.listType || null,
             imageUrl: block.imageUrl || null,
-            language: block.language || null,
-            ctaText: block.ctaText || null,
-            ctaLink: block.ctaLink || null,
             productName: block.productName || null,
-            overallRating: block.overallRating || null,
             ingredientsIntroduction: block.ingredientsIntroduction || null,
-            howToUse: block.howToUse || null,
-            price: block.price || null,
-            verdict: block.verdict || null,
-            author: block.author || null,
-            reviewDate: block.reviewDate || null,
-            medicallyReviewed: block.medicallyReviewed || null,
-            factChecked: block.factChecked || null,
+            ctaText: block.ctaText || null,
             ctaButtonText: block.ctaButtonText || null,
             ctaButtonLink: block.ctaButtonLink || null,
             backgroundColor: block.backgroundColor || null,
-            order: index,
-            // Create related records
-            pros:
-              block.pros && block.pros.length > 0
-                ? {
-                    create: block.pros.map((pro: any, proIndex: number) => ({
-                      content: pro.content,
-                      order: proIndex,
-                    })),
-                  }
-                : undefined,
-            cons:
-              block.cons && block.cons.length > 0
-                ? {
-                    create: block.cons.map((con: any, conIndex: number) => ({
-                      content: con.content,
-                      order: conIndex,
-                    })),
-                  }
-                : undefined,
-            ingredients:
-              block.ingredients && block.ingredients.length > 0
-                ? {
-                    create: block.ingredients.map((ingredient: any, ingIndex: number) => ({
-                      content: ingredient.content,
-                      order: ingIndex,
-                    })),
-                  }
-                : undefined,
-            highlights:
-              block.highlights && block.highlights.length > 0
-                ? {
-                    create: block.highlights.map((highlight: any, hlIndex: number) => ({
-                      content: highlight.content,
-                      order: hlIndex,
-                    })),
-                  }
-                : undefined,
-            ingredientsList:
-              block.ingredientsList && block.ingredientsList.length > 0
-                ? {
-                    create: block.ingredientsList.map((item: any) => ({
-                      number: item.number || 1,
-                      name: item.name,
-                      imageUrl: item.imageUrl || "/placeholder.svg",
-                      description: item.description || "",
-                      studyYear: item.studyYear || null,
-                      studySource: item.studySource || null,
-                      studyDescription: item.studyDescription || null,
-                    })),
-                  }
-                : undefined,
+            // Create nested relations
+            pros: block.pros
+              ? {
+                  create: block.pros.map((pro: any, proIdx: number) => ({
+                    content: pro.content,
+                    order: proIdx,
+                  })),
+                }
+              : undefined,
+            cons: block.cons
+              ? {
+                  create: block.cons.map((con: any, conIdx: number) => ({
+                    content: con.content,
+                    order: conIdx,
+                  })),
+                }
+              : undefined,
+            ingredients: block.ingredients
+              ? {
+                  create: block.ingredients.map((ingredient: any, ingIdx: number) => ({
+                    content: ingredient.content,
+                    order: ingIdx,
+                  })),
+                }
+              : undefined,
+            highlights: block.highlights
+              ? {
+                  create: block.highlights.map((highlight: any, hlIdx: number) => ({
+                    content: highlight.content,
+                    order: hlIdx,
+                  })),
+                }
+              : undefined,
+            ingredientsList: block.ingredientsList
+              ? {
+                  create: block.ingredientsList.map((ingredient: any) => ({
+                    number: ingredient.number || 1,
+                    name: ingredient.name,
+                    imageUrl: ingredient.imageUrl || null,
+                    description: ingredient.description || "",
+                    studyYear: ingredient.studyYear || null,
+                    studySource: ingredient.studySource || null,
+                    studyDescription: ingredient.studyDescription || null,
+                  })),
+                }
+              : undefined,
             ratings: block.ratings
               ? {
                   create: {
-                    ingredients: block.ratings.ingredients || null,
-                    value: block.ratings.value || null,
-                    manufacturer: block.ratings.manufacturer || null,
-                    safety: block.ratings.safety || null,
-                    effectiveness: block.ratings.effectiveness || null,
+                    ingredients: block.ratings.ingredients || 0,
+                    value: block.ratings.value || 0,
+                    manufacturer: block.ratings.manufacturer || 0,
+                    safety: block.ratings.safety || 0,
+                    effectiveness: block.ratings.effectiveness || 0,
                   },
                 }
               : undefined,
-            customFields:
-              block.customFields && block.customFields.length > 0
-                ? {
-                    create: block.customFields.map((field: any) => ({
-                      name: field.name,
-                      value: field.value,
-                    })),
-                  }
-                : undefined,
           })),
         },
       },
       include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+          },
+        },
+        category: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
         blocks: {
           include: {
             pros: true,
@@ -222,9 +237,18 @@ export async function POST(request: Request) {
       },
     })
 
-    return NextResponse.json(createdArticle, { status: 201 })
+    return NextResponse.json(
+      {
+        success: true,
+        article: {
+          ...article,
+          id: article.id.toString(),
+        },
+      },
+      { status: 201 },
+    )
   } catch (error) {
     console.error("Error creating article:", error)
-    return NextResponse.json({ error: "Failed to create article" }, { status: 500 })
+    return NextResponse.json({ success: false, message: "Failed to create article" }, { status: 500 })
   }
 }

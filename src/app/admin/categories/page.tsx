@@ -232,7 +232,7 @@ export default function CategoriesPage() {
 
   const renderCategoryTree = (category: Category, level = 0) => {
     return (
-      <div key={category.id} className={`${level > 0 ? "ml-6" : ""}`}>
+      <div key={category.id} className={`${level > 0 ? "ml-12" : ""}`}>
         <Card className="mb-2">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">

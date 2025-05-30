@@ -13,6 +13,21 @@ export async function GET(request: NextRequest) {
     const article = await prisma.article.findUnique({
       where: { id },
       include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+          },
+        },
+        category: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
         blocks: {
           include: {
             pros: true,
@@ -88,7 +103,6 @@ export async function GET(request: NextRequest) {
     // Extract FAQs from custom fields
     const faqs = []
     for (let i = 1; i <= 10; i++) {
-      // Assume max 10 FAQs
       const question = getCustomFieldValue(`faq_question_${i}`)
       const answer = getCustomFieldValue(`faq_answer_${i}`)
       if (question && answer) {
@@ -99,7 +113,6 @@ export async function GET(request: NextRequest) {
     // Extract customer reviews from custom fields
     const customerReviews = []
     for (let i = 1; i <= 5; i++) {
-      // Assume max 5 reviews
       const name = getCustomFieldValue(`review_name_${i}`)
       const location = getCustomFieldValue(`review_location_${i}`)
       const rating = getCustomFieldValue(`review_rating_${i}`)
@@ -184,11 +197,12 @@ export async function GET(request: NextRequest) {
       id: article.id,
       title: article.title,
       slug: article.slug,
-      author: article.author,
+      author: article.user.name, // Keep for backward compatibility
       publishDate: article.publishDate.toISOString(),
       imageUrl: article.imageUrl || "",
       createdAt: article.createdAt.toISOString(),
       updatedAt: article.updatedAt.toISOString(),
+      user: article.user, // Add user object
 
       // Extract content sections
       overview:
