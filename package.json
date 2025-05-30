@@ -44,6 +44,7 @@
     "ckeditor5-build-classic": "^1.0.0",
     "class-variance-authority": "^0.7.1",
     "cmdk": "^1.1.1",
+    "embla-carousel-react": "^8.6.0",
     "i": "^0.3.7",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.483.0",
