@@ -3,11 +3,11 @@ import prisma from "@/lib/prisma"
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const category = await prisma.category.findUnique({
-      where: { id: params.id },
+      where: { id:(await params).id },
       include: {
         parent: true,
         children: {
@@ -23,7 +23,7 @@ export async function GET(
             id: true,
             title: true,
             slug: true,
-            author: true,
+            user: true,
             publishDate: true,
             imageUrl: true
           },
@@ -57,14 +57,14 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const data = await request.json()
 
     // Check if category exists
     const existingCategory = await prisma.category.findUnique({
-      where: { id: params.id }
+      where: { id: (await params).id }
     })
 
     if (!existingCategory) {
@@ -89,7 +89,7 @@ export async function PUT(
         where: { slug }
       })
 
-      if (conflictingCategory && conflictingCategory.id !== params.id) {
+      if (conflictingCategory && conflictingCategory.id !== (await params).id) {
         return NextResponse.json(
           { success: false, message: "A category with this slug already exists" },
           { status: 400 }
@@ -98,7 +98,7 @@ export async function PUT(
     }
 
     // Prevent setting parent to self or creating circular references
-    if (data.parentId === params.id) {
+    if (data.parentId === (await params).id) {
       return NextResponse.json(
         { success: false, message: "A category cannot be its own parent" },
         { status: 400 }
@@ -120,7 +120,7 @@ export async function PUT(
       }
 
       // Check for circular reference (simplified check)
-      if (parentCategory.parentId === params.id) {
+      if (parentCategory.parentId === (await params).id) {
         return NextResponse.json(
           { success: false, message: "This would create a circular reference" },
           { status: 400 }
@@ -129,7 +129,7 @@ export async function PUT(
     }
 
     const updatedCategory = await prisma.category.update({
-      where: { id: params.id },
+      where: { id: (await params).id },
       data: {
         name: data.name || existingCategory.name,
         slug: slug || existingCategory.slug,

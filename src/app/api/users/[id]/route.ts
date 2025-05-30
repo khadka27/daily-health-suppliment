@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server"
 import prisma from "@/lib/prisma"
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const user = await prisma.user.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
       include: {
         articles: {
           select: {
@@ -42,13 +42,13 @@ export async function GET(request: Request, { params }: { params: { id: string }
   }
 }
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request, { params }: { params:Promise < { id: string }> }) {
   try {
     const data = await request.json()
 
     // Check if user exists
     const existingUser = await prisma.user.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
     })
 
     if (!existingUser) {
@@ -61,13 +61,13 @@ export async function PUT(request: Request, { params }: { params: { id: string }
         where: { email: data.email },
       })
 
-      if (conflictingUser && conflictingUser.id !== params.id) {
+      if (conflictingUser && conflictingUser.id !==(await params).id) {
         return NextResponse.json({ success: false, message: "A user with this email already exists" }, { status: 400 })
       }
     }
 
     const updatedUser = await prisma.user.update({
-      where: { id: params.id },
+      where: { id:(await params).id },
       data: {
         email: data.email || existingUser.email,
         name: data.name || existingUser.name,
@@ -91,11 +91,11 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, { params }: { params: Promise <{ id: string }> }) {
   try {
     // Check if user exists
     const user = await prisma.user.findUnique({
-      where: { id: params.id },
+      where: { id:(await params).id },
       include: {
         _count: {
           select: { articles: true },
@@ -119,7 +119,7 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
     }
 
     await prisma.user.delete({
-      where: { id: params.id },
+      where: { id: (await params).id },
     })
 
     return NextResponse.json({
