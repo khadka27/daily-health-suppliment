@@ -162,12 +162,12 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params:Promise< { id: string }> }
 ) {
   try {
     // Check if category exists
     const category = await prisma.category.findUnique({
-      where: { id: params.id },
+      where: { id: (await params).id },
       include: {
         children: true,
         _count: {
@@ -200,7 +200,7 @@ export async function DELETE(
     }
 
     await prisma.category.delete({
-      where: { id: params.id }
+      where: { id: (await params).id }
     })
 
     return NextResponse.json({
