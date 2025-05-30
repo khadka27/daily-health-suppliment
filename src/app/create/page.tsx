@@ -13,6 +13,7 @@ import { toast } from "@/components/ui/use-toast"
 import { SectionEditor } from "@/components/block-editor/section-editor"
 import { ArticleRenderer } from "@/components/article-renderer"
 import { ProductSetupWizard } from "@/components/product-setup-wizard"
+import { CategorySelector } from "@/components/CategorySelector"
 import type { Article, Block } from "@/types/article"
 import Image from "next/image"
 
@@ -24,6 +25,7 @@ export default function CreateArticlePage() {
   const [title, setTitle] = useState("")
   const [author, setAuthor] = useState("")
   const [imageUrl, setImageUrl] = useState("")
+  const [categoryId, setCategoryId] = useState("")
   const [sections, setSections] = useState<Block[][]>([])
 
   // Flatten sections into blocks for saving and preview
@@ -56,9 +58,10 @@ export default function CreateArticlePage() {
         author,
         publishDate: new Date(),
         imageUrl: imageUrl || undefined,
+        categoryId: categoryId || undefined,
       }
 
-      const response = await fetch("/api/articles", {
+      const response = await fetch("/api/article", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -78,7 +81,7 @@ export default function CreateArticlePage() {
         description: "Article created successfully",
       })
 
-      router.push(`/Article/${createdArticle.slug}`)
+      router.push(`/articles/${createdArticle.slug}`)
       router.refresh()
     } catch (error) {
       console.error("Error creating article:", error)
@@ -167,6 +170,13 @@ export default function CreateArticlePage() {
                 required
               />
             </div>
+
+            <CategorySelector
+              value={categoryId}
+              onValueChange={setCategoryId}
+              label="Category"
+              placeholder="Select a category (optional)"
+            />
 
             <div className="space-y-2">
               <Label htmlFor="imageUrl">Featured Image URL</Label>

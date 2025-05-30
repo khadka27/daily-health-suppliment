@@ -7,6 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
 model Article {
   id          String   @id @default(cuid())
   title       String
@@ -16,9 +17,25 @@ model Article {
   imageUrl    String?
   publishDate DateTime @default(now())
   slug        String   @unique
+  categoryId  String?
+  category    Category? @relation(fields: [categoryId], references: [id])
   blocks      Block[]
 }
 
+model Category {
+  id          String     @id @default(cuid())
+  name        String
+  slug        String     @unique
+  description String?
+  parentId    String?
+  parent      Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryHierarchy")
+  articles    Article[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  isActive    Boolean    @default(true)
+  sortOrder   Int        @default(0)
+}
 model Block {
   id                      String           @id @default(cuid())
   type                    String

@@ -1,12 +1,31 @@
+export interface Category {
+  id: string
+  name: string
+  slug: string
+  description?: string
+  parentId?: string
+  parent?: Category
+  children: Category[]
+  isActive: boolean
+  sortOrder: number
+  createdAt: Date
+  updatedAt: Date
+  _count?: {
+    articles: number
+  }
+}
+
 export interface Article {
   id: string
   title: string
-  slug: string
-  author: string
-  publishDate: Date
-  imageUrl?: string
   createdAt: Date
   updatedAt: Date
+  author: string
+  imageUrl?: string
+  publishDate: Date
+  slug: string
+  categoryId?: string
+  category?: Category
   blocks: Block[]
 }
 
@@ -35,13 +54,13 @@ export interface Block {
   backgroundColor?: string
   order: number
   articleId: string
-  ratings?: Rating
   pros: Pros[]
   cons: Cons[]
   ingredients: Ingredient[]
   highlights: Highlight[]
   customFields: CustomField[]
   ingredientsList: IngredientItem[]
+  ratings?: Rating
 }
 
 export interface Rating {
