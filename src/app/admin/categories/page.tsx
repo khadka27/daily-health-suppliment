@@ -53,7 +53,7 @@ interface CategoryFormData {
   name: string
   slug: string
   description: string
-  parentId: string
+  parentId: string | null
   isActive: boolean
   sortOrder: number
 }
@@ -68,7 +68,7 @@ export default function CategoriesPage() {
     name: "",
     slug: "",
     description: "",
-    parentId: "",
+    parentId: null,
     isActive: true,
     sortOrder: 0,
   })
@@ -165,7 +165,7 @@ export default function CategoriesPage() {
       name: category.name,
       slug: category.slug,
       description: category.description || "",
-      parentId: category.parentId || "",
+      parentId: category.parentId ?? null,
       isActive: category.isActive,
       sortOrder: category.sortOrder,
     })
@@ -208,7 +208,7 @@ export default function CategoriesPage() {
       name: "",
       slug: "",
       description: "",
-      parentId: "",
+      parentId: null,
       isActive: true,
       sortOrder: 0,
     })
@@ -232,7 +232,7 @@ export default function CategoriesPage() {
 
   const renderCategoryTree = (category: Category, level = 0) => {
     return (
-      <div key={category.id} className={`${level > 0 ? "ml-12" : ""}`}>
+      <div key={category.id} className={`${level > 0 ? "ml-6" : ""}`}>
         <Card className="mb-2">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
@@ -270,7 +270,7 @@ export default function CategoriesPage() {
                     <AlertDialogHeader>
                       <AlertDialogTitle>Delete Category</AlertDialogTitle>
                       <AlertDialogDescription>
-                        Are you sure you want to delete &quot;{category.name}&ldquo;? This action cannot be undone.
+                        Are you sure you want to delete &quot;{category.name}&quot;? This action cannot be undone.
                         {category.children.length > 0 && (
                           <span className="block mt-2 text-red-600">
                             This category has {category.children.length} subcategories that must be deleted or moved
@@ -373,8 +373,13 @@ export default function CategoriesPage() {
               <div className="space-y-2">
                 <Label htmlFor="parentId">Parent Category</Label>
                 <Select
-                  value={formData.parentId}
-                  onValueChange={(value) => setFormData((prev) => ({ ...prev, parentId: value }))}
+                  value={formData.parentId ?? "none"}
+                  onValueChange={(value) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      parentId: value === "none" ? null : value,
+                    }))
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select parent category (optional)" />
